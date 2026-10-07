@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+<title>Helaberry · Live Painting Studio</title>
+
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/paint.css') }}" />
+</head>
+<body>
+
+<!-- =========================================================
+     NAVBAR
+========================================================== -->
+<nav class="hb-nav">
+  <a class="hb-nav-brand" href="#" onclick="return false;">
+    <span class="hb-nav-icon">H</span>
+    <span class="hb-nav-name">Helaberry</span>
+    <span class="hb-nav-tag">Studio</span>
+  </a>
+  <div class="hb-nav-actions">
+    <button class="hb-btn hb-btn-outline hb-btn-sm" id="navUploadBtn">
+      <i class="fas fa-cloud-arrow-up"></i> Upload
+    </button>
+    <button class="hb-btn hb-btn-gold hb-btn-sm" id="navAnalyzeBtn">
+      <i class="fas fa-chart-pie"></i> Analyze
+    </button>
+    <button class="hb-btn hb-btn-primary hb-btn-sm" id="navDownloadBtn">
+      <i class="fas fa-download"></i> Export
+    </button>
+  </div>
+</nav>
+
+<!-- =========================================================
+     BACKGROUND
+========================================================== -->
+<div class="hb-bg">
+  <div class="hb-orb hb-orb-1"></div>
+  <div class="hb-orb hb-orb-2"></div>
+  <div class="hb-orb hb-orb-3"></div>
+  <div class="hb-orb hb-orb-4"></div>
+</div>
+<div class="hb-grid"></div>
+
+<!-- =========================================================
+     STUDIO
+========================================================== -->
+<main class="studio">
+
+  <!-- ============ TOOLS PANEL ============ -->
+  <aside class="tools-panel">
+
+    <!-- Canvas -->
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-image"></i> Canvas</div>
+      <button class="hb-btn hb-btn-outline hb-btn-block hb-btn-sm" id="uploadBtn">
+        <i class="fas fa-cloud-arrow-up"></i> Upload Line Art
+      </button>
+      <div class="hint">PNG · JPG · WEBP — max 1200px</div>
+    </div>
+
+    <!-- Tools -->
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-screwdriver-wrench"></i> Tools</div>
+      <div class="tool-grid">
+        <button class="tool-btn active" data-tool="brush" title="Brush (B)"><i class="fas fa-paintbrush"></i></button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser (E)"><i class="fas fa-eraser"></i></button>
+        <button class="tool-btn" data-tool="fill" title="Fill (G)"><i class="fas fa-fill-drip"></i></button>
+        <button class="tool-btn" data-tool="picker" title="Eyedropper (I)"><i class="fas fa-eye-dropper"></i></button>
+        <button class="tool-btn" data-tool="select" title="Quick Select (W)"><i class="fas fa-wand-magic-sparkles"></i></button>
+      </div>
+    </div>
+
+    <!-- Selection -->
+    <div class="panel hb-glass" id="selectionPanel" style="display:none;">
+      <div class="panel-title"><i class="fas fa-wand-magic-sparkles"></i> Quick Select</div>
+      <div class="segmented cols-3" id="selModeGroup">
+        <button class="seg-btn active" data-mode="new" type="button">New</button>
+        <button class="seg-btn" data-mode="add" type="button">Add</button>
+        <button class="seg-btn" data-mode="subtract" type="button">Subtract</button>
+      </div>
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="thresholdSlider">Tolerance</label>
+        <span class="value" id="thresholdValue">32</span>
+      </div>
+      <input type="range" id="thresholdSlider" class="hb-range" min="5" max="100" value="32" />
+      <div class="hint" style="margin-top:2px;">Click a region · drag to expand</div>
+      <button class="hb-btn hb-btn-outline hb-btn-sm hb-btn-block" id="deselectBtn">
+        <i class="fas fa-xmark"></i> Deselect (Ctrl+D)
+      </button>
+    </div>
+
+    <!-- Brush -->
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-sliders"></i> Brush</div>
+      <div class="segmented cols-4" id="brushTypeGroup">
+        <button class="seg-btn active" data-brush="round" type="button" title="Round"><i class="fas fa-circle"></i></button>
+        <button class="seg-btn" data-brush="square" type="button" title="Square"><i class="fas fa-square"></i></button>
+        <button class="seg-btn" data-brush="marker" type="button" title="Marker"><i class="fas fa-marker"></i></button>
+        <button class="seg-btn" data-brush="spray" type="button" title="Airbrush"><i class="fas fa-spray-can"></i></button>
+      </div>
+
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="sizeSlider">Size</label>
+        <span class="value" id="sizeValue">14</span>
+      </div>
+      <input type="range" id="sizeSlider" class="hb-range" min="1" max="140" value="14" />
+
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="opacitySlider">Opacity</label>
+        <span class="value" id="opacityValue">100%</span>
+      </div>
+      <input type="range" id="opacitySlider" class="hb-range" min="5" max="100" value="100" />
+
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="fillTolSlider">Fill Tolerance</label>
+        <span class="value" id="fillTolValue">42</span>
+      </div>
+      <input type="range" id="fillTolSlider" class="hb-range" min="5" max="120" value="42" />
+    </div>
+
+    <!-- Symmetry -->
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-clone"></i> Symmetry</div>
+      <div class="segmented cols-4" id="symmetryGroup">
+        <button class="seg-btn active" data-sym="off" type="button">Off</button>
+        <button class="seg-btn" data-sym="vertical" type="button">Vertical</button>
+        <button class="seg-btn" data-sym="horizontal" type="button">Horiz</button>
+        <button class="seg-btn" data-sym="quad" type="button">Quad</button>
+      </div>
+      <div class="hint">Mirror your strokes in real time</div>
+    </div>
+
+    <!-- Color Wheel -->
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-palette"></i> Color Wheel</div>
+      <div class="wheel-wrap">
+        <canvas id="wheelCanvas" width="480" height="480"></canvas>
+      </div>
+
+      <div class="color-display" style="margin-top:4px;">
+        <label class="color-swatch-lg" id="colorSwatchLg" style="background:#7c6cf0;">
+          <input type="color" id="colorInput" value="#7c6cf0" />
+        </label>
+        <div class="color-info">
+          <input type="text" id="colorHexInput" class="color-hex-input" value="#7C6CF0" spellcheck="false" maxlength="7" />
+          <div class="color-name">Current Color</div>
+        </div>
+      </div>
+
+      <select class="hb-select" id="harmonySelect" title="Color harmony scheme">
+        <option value="free">🎨 Free — no harmony guide</option>
+        <option value="complementary">Complementary — 2 opposite hues</option>
+        <option value="analogous">Analogous — 3 neighbouring hues</option>
+        <option value="triadic">Triadic — 3 evenly spaced hues</option>
+        <option value="splitComplementary">Split-Complementary — 3 hues</option>
+        <option value="tetradic">Tetradic — 4 hues (rectangle)</option>
+        <option value="square">Square — 4 evenly spaced hues</option>
+        <option value="monochromatic">Monochromatic — 1 hue</option>
+      </select>
+
+      <div class="harmony-strip" id="harmonyStrip"></div>
+
+      <div class="panel-title" style="margin-top:6px;"><i class="fas fa-swatchbook"></i> Palette</div>
+      <div class="palette" id="palette"></div>
+
+      <div class="panel-title" style="margin-top:4px;"><i class="fas fa-clock-rotate-left"></i> Recent</div>
+      <div class="recent-row" id="recentRow"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-bolt"></i> Actions</div>
+      <div class="action-grid">
+        <button class="hb-btn hb-btn-outline" id="undoBtn" title="Undo (Ctrl+Z)">
+          <i class="fas fa-rotate-left"></i> Undo
+        </button>
+        <button class="hb-btn hb-btn-outline" id="redoBtn" title="Redo (Ctrl+Shift+Z)">
+          <i class="fas fa-rotate-right"></i> Redo
+        </button>
+        <button class="hb-btn hb-btn-outline" id="toggleLinesBtn" title="Toggle line art (X)">
+          <i class="fas fa-eye-slash"></i> Lines
+        </button>
+        <button class="hb-btn hb-btn-danger" id="clearBtn" title="Clear all paint">
+          <i class="fas fa-trash-can"></i> Clear
+        </button>
+      </div>
+      <button class="hb-btn hb-btn-gold hb-btn-block" id="analyzeBtn" style="margin-top:2px;">
+        <i class="fas fa-chart-pie"></i> Analyze Color Theory
+      </button>
+      <button class="hb-btn hb-btn-primary hb-btn-block" id="downloadBtn">
+        <i class="fas fa-download"></i> Download PNG
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ============ CANVAS AREA ============ -->
+  <section class="canvas-area" id="canvasArea">
+    <div class="canvas-stage" id="canvasStage">
+      <canvas id="lineCanvas"></canvas>
+      <canvas id="paintCanvas"></canvas>
+      <canvas id="selectionCanvas" class="selection-canvas"></canvas>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-card hb-glass" id="dropZone">
+        <div class="empty-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+        <h2>Upload your line art</h2>
+        <p>Drag &amp; drop an image here, or click to browse. Works best with black outlines on a white background.</p>
+        <div class="formats">
+          <span class="format-pill">PNG</span>
+          <span class="format-pill">JPG</span>
+          <span class="format-pill">WEBP</span>
+        </div>
+        <button class="hb-btn hb-btn-primary hb-btn-lg" id="emptyUploadBtn" style="margin-top:6px;">
+          <i class="fas fa-folder-open"></i> Choose Image
+        </button>
+      </div>
+    </div>
+
+    <div class="sel-active-pill" id="selActivePill" style="display:none;">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      <span>Selection active</span>
+      <button id="pillDeselectBtn" title="Deselect"><i class="fas fa-xmark"></i></button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Hidden file input -->
+<input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/*" hidden />
+
+<!-- Brush cursor -->
+<div class="brush-cursor" id="brushCursor"></div>
+
+<!-- =========================================================
+     ANALYSIS MODAL
+========================================================== -->
+<div class="modal-overlay" id="analysisModal">
+  <div class="modal" id="analysisModalBox">
+    <div class="modal-head">
+      <div>
+        <h3><i class="fas fa-chart-pie"></i> Color Theory Analysis</h3>
+        <p>Palette harmony &amp; composition report</p>
+      </div>
+      <button class="modal-close" id="analysisClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="analysisBody"></div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/paint.js') }}"></script>
+
+</body>
+</html>

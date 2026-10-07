@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Image Studio — Palette, BG Remover &amp; Selection Tools</title>
+
+<!-- ===== FAVICON / LOGO ===== -->
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+<meta name="theme-color" content="#0e1014" />
+<meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/bg.css') }}" />
+</head>
+
+<body>
+
+  <!-- ================= TOP BAR ================= -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Image Studio" onerror="this.remove()" />
+      </div>
+      <div>
+        Image Studio
+        <small>Palette, BG remover &amp; selection</small>
+      </div>
+    </div>
+
+    <div class="mode-tabs" role="tablist">
+      <button class="mode-tab active" data-mode="palette" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13.5" cy="6.5" r="2.5"/>
+          <circle cx="17.5" cy="14.5" r="2.5"/>
+          <circle cx="8.5" cy="17.5" r="2.5"/>
+          <circle cx="6.5" cy="8.5" r="2.5"/>
+        </svg>
+        <span class="label">Palette</span>
+      </button>
+      <button class="mode-tab" data-mode="bg" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h6v6H4z"/>
+          <path d="M14 4h6v6h-6z"/>
+          <path d="M4 14h6v6H4z"/>
+          <path d="m20 14-3 3m0 0-3 3m3-3v6"/>
+        </svg>
+        <span class="label">Remove BG</span>
+      </button>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn primary" id="uploadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span class="label">Upload</span>
+      </button>
+      <button class="btn" id="urlBtn" title="Load image from a URL">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        <span class="label">URL</span>
+      </button>
+      <button class="btn" id="pasteBtn" title="Paste from clipboard (Ctrl+V)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="2" width="8" height="4" rx="1"/>
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+        </svg>
+        <span class="label">Paste</span>
+      </button>
+      <button class="btn" id="eyeDropperBtn" hidden title="Pick a color from anywhere on screen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m2 22 1-1h3l9-9"/>
+          <path d="M3 21v-3l9-9"/>
+          <path d="m15 6 3.5-3.5a2.12 2.12 0 0 1 3 3L18 9l.5.5a2.12 2.12 0 0 1-3 3L12 9l-1 1"/>
+        </svg>
+        <span class="label">Screen</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main class="app">
+
+    <section class="stage">
+      <div class="viewport" id="viewport">
+        <canvas id="canvas" class="hidden"></canvas>
+
+        <div class="empty" id="empty">
+          <div class="glyph">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+          </div>
+          <h3>Drop an image to begin</h3>
+          <p>Drag &amp; drop, paste with <kbd>Ctrl</kbd>&thinsp;+&thinsp;<kbd>V</kbd>, load from URL, or pick a file. Extract colors or remove the background with 5 selection tools.</p>
+          <div class="empty-actions">
+            <button class="btn primary" id="emptyUpload">Choose a file</button>
+            <button class="btn" id="emptyUrl">Load from URL</button>
+          </div>
+        </div>
+
+        <!-- Marquee rectangle overlay -->
+        <div class="marquee-overlay" id="marqueeOverlay">
+          <div class="size-tag" id="marqueeSize">0 × 0</div>
+        </div>
+
+        <!-- BG Remover floating toolbar -->
+        <div class="toolbar" id="toolbar" hidden>
+          <button class="tool-btn" id="toolWand" data-tool="wand" title="Magic Wand (W) — click a color to remove all connected pixels of that color">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 4 5 5-9 9H6v-5z"/>
+              <path d="M9 15 4 20"/>
+              <path d="m18 2 1 1"/><path d="m20 5 1 1"/><path d="m13 2 1 1"/>
+            </svg>
+            <span class="label">Wand</span>
+          </button>
+
+          <button class="tool-btn" id="toolQuickSelect" data-tool="quickselect" title="Quick Selection (Q) — drag to paint-select pixels similar to where you started">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" stroke-dasharray="3 2"/>
+              <path d="m21 21-4.3-4.3"/>
+              <path d="M7 11a4 4 0 0 1 4-4"/>
+              <circle cx="11" cy="11" r="2" fill="currentColor"/>
+            </svg>
+            <span class="label">Quick Select</span>
+          </button>
+
+          <button class="tool-btn" id="toolMarquee" data-tool="marquee" title="Erase Box (E) — drag a rectangle to erase everything inside">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="4 3"/>
+              <path d="m9 12 6 0"/>
+            </svg>
+            <span class="label">Erase</span>
+          </button>
+
+          <button class="tool-btn active" id="toolBrush" data-tool="brush" title="Brush (B) — paint to erase pixels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m7 21-4-4V9l6-6 10 10-6 8H7z"/>
+              <path d="m5 21 14-14"/>
+            </svg>
+            <span class="label">Brush</span>
+          </button>
+
+          <button class="tool-btn" id="toolRestore" data-tool="restore" title="Restore (R) — paint to bring pixels back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7v6h6"/>
+              <path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>
+            </svg>
+            <span class="label">Restore</span>
+          </button>
+
+          <div class="divider"></div>
+
+          <button class="tool-btn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7v6h6"/>
+              <path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>
+            </svg>
+            <span class="label">Undo</span>
+          </button>
+          <button class="tool-btn" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 7v6h-6"/>
+              <path d="M3 17a9 9 0 0 1 15-6.7L21 13"/>
+            </svg>
+            <span class="label">Redo</span>
+          </button>
+
+          <div class="divider"></div>
+
+          <button class="tool-btn" id="resetBgBtn" title="Reset to original">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            <span class="label">Reset</span>
+          </button>
+        </div>
+
+        <div class="brush-cursor" id="brushCursor"></div>
+
+        <div class="loupe" id="loupe" hidden>
+          <canvas id="loupeCanvas" width="148" height="148"></canvas>
+        </div>
+
+        <div class="hover-badge" id="hoverBadge" hidden></div>
+
+        <div class="status-pill" id="statusPill" hidden>
+          <div class="spinner"></div>
+          <span id="statusText">Working…</span>
+          <div class="progress-track" id="progressTrack" hidden>
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="zoombar" id="zoombar" hidden>
+          <button id="zoomOut" title="Zoom out (−)">−</button>
+          <span class="zoom-label" id="zoomLabel">100%</span>
+          <button id="zoomIn" title="Zoom in (+)">+</button>
+          <div class="divider"></div>
+          <button class="wide" id="zoomFit" title="Fit (F)">Fit</button>
+          <button class="wide" id="zoomReset" title="100% (1)">1:1</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="side-scroll">
+
+        <!-- ========== PALETTE PANEL ========== -->
+        <div class="side-panel active" data-panel="palette">
+          <section class="card">
+            <h2>Picked color</h2>
+            <div class="picked">
+              <div class="picked-swatch" id="pickedSwatch"><i></i></div>
+              <div class="picked-values">
+                <button class="value-row" data-copy="hex"><span>HEX</span><b id="vHex">—</b></button>
+                <button class="value-row" data-copy="rgb"><span>RGB</span><b id="vRgb">—</b></button>
+                <button class="value-row" data-copy="hsl"><span>HSL</span><b id="vHsl">—</b></button>
+              </div>
+            </div>
+            <p class="hint">Click the image to sample a pixel. Click any value to copy it.</p>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <h2>Palette</h2>
+              <div class="count-control">
+                <label for="countRange">Colors</label>
+                <input type="range" id="countRange" min="2" max="10" step="1" value="5" />
+                <output id="countOut">5</output>
+              </div>
+            </div>
+            <div class="palette" id="palette"></div>
+            <div class="row-actions">
+              <button class="btn small" id="regenBtn" title="Regenerate unlocked colors (Space)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/>
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>
+                </svg>
+                Regenerate
+              </button>
+              <button class="btn small" id="shuffleBtn">Shuffle</button>
+              <button class="btn small" id="sortBtn">Sort</button>
+              <button class="btn small" id="unlockAll">Unlock all</button>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Export</h2>
+            <div class="row-actions compact">
+              <button class="btn small" id="exportCss">CSS variables</button>
+              <button class="btn small" id="exportJson">JSON</button>
+              <button class="btn small" id="exportHex">HEX list</button>
+              <button class="btn small" id="exportPng">PNG image</button>
+            </div>
+          </section>
+
+          <section class="card" id="historyCard" hidden>
+            <h2>Recent picks</h2>
+            <div class="history" id="history"></div>
+          </section>
+        </div>
+
+        <!-- ========== REMOVE BG PANEL ========== -->
+        <div class="side-panel" data-panel="bg">
+
+          <section class="card">
+            <div class="card-head">
+              <h2>Auto removal</h2>
+              <span class="badge ai">AI</span>
+            </div>
+            <p style="margin:0 0 12px;font-size:11.5px;color:var(--muted);line-height:1.55;">
+              Neural network running entirely in your browser. First run downloads ~40&nbsp;MB of models (then cached).
+            </p>
+            <button class="btn primary" id="aiRemoveBtn" style="width:100%;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/>
+                <circle cx="12" cy="12" r="4"/>
+              </svg>
+              Remove background automatically
+            </button>
+          </section>
+
+          <!-- ============== SELECTION TOOLS ============== -->
+          <section class="card">
+            <div class="card-head">
+              <h2>Selection tools</h2>
+              <span class="badge new">5 tools</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:6px">
+
+              <div class="tool-card" data-tool-card="wand">
+                <div class="tc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 4 5 5-9 9H6v-5z"/>
+                    <path d="M9 15 4 20"/>
+                  </svg>
+                </div>
+                <div class="tc-body">
+                  <div class="tc-title">Magic Wand <span class="key">W</span></div>
+                  <div class="tc-desc">Click any color to remove all connected pixels of a similar color. Best for solid backgrounds.</div>
+                </div>
+              </div>
+
+              <div class="tool-card" data-tool-card="quickselect">
+                <div class="tc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7" stroke-dasharray="3 2"/>
+                    <path d="m21 21-4.3-4.3"/>
+                    <circle cx="11" cy="11" r="2" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="tc-body">
+                  <div class="tc-title">Quick Selection <span class="key">Q</span></div>
+                  <div class="tc-desc">Drag to paint-select pixels similar to where the stroke started. Great for textured or gradient backgrounds.</div>
+                </div>
+              </div>
+
+              <div class="tool-card" data-tool-card="marquee">
+                <div class="tc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="4 3"/>
+                    <path d="m9 12 6 0"/>
+                  </svg>
+                </div>
+                <div class="tc-body">
+                  <div class="tc-title">Erase Box <span class="key">E</span></div>
+                  <div class="tc-desc">Drag a rectangle to instantly erase everything inside. Fastest way to wipe large areas.</div>
+                </div>
+              </div>
+
+              <div class="tool-card" data-tool-card="brush">
+                <div class="tc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m7 21-4-4V9l6-6 10 10-6 8H7z"/>
+                    <path d="m5 21 14-14"/>
+                  </svg>
+                </div>
+                <div class="tc-body">
+                  <div class="tc-title">Brush <span class="key">B</span></div>
+                  <div class="tc-desc">Free-hand erase. Hold <strong>Shift</strong> while painting to temporarily switch to Restore.</div>
+                </div>
+              </div>
+
+              <div class="tool-card" data-tool-card="restore">
+                <div class="tc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7v6h6"/>
+                    <path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>
+                  </svg>
+                </div>
+                <div class="tc-body">
+                  <div class="tc-title">Restore <span class="key">R</span></div>
+                  <div class="tc-desc">Paint pixels back in. Uses the original image data so nothing is lost.</div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Wand / Quick Select</h2>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Tolerance</span>
+                <output id="toleranceOut">32</output>
+              </div>
+              <input type="range" class="full" id="toleranceRange" min="0" max="120" step="1" value="32" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Edge softness</span>
+                <output id="featherOut">0</output>
+              </div>
+              <input type="range" class="full" id="featherRange" min="0" max="6" step="1" value="0" />
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Brush</h2>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Size</span>
+                <output id="brushSizeOut">40</output>
+              </div>
+              <input type="range" class="full" id="brushSizeRange" min="4" max="300" step="2" value="40" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Hardness</span>
+                <output id="brushHardOut">80</output>
+              </div>
+              <input type="range" class="full" id="brushHardRange" min="0" max="100" step="5" value="80" />
+            </div>
+            <p class="tool-hint">
+              These settings apply to <strong>Brush</strong>, <strong>Restore</strong> and <strong>Quick Selection</strong>.
+            </p>
+          </section>
+
+          <section class="card">
+            <h2>Preview background</h2>
+            <div class="bg-preview-grid">
+              <div class="bg-option checker active" data-bg="transparent" title="Transparent"></div>
+              <div class="bg-option white" data-bg="white" title="White"></div>
+              <div class="bg-option black" data-bg="black" title="Black"></div>
+              <div class="bg-option custom" data-bg="custom" title="Custom">
+                <input type="color" class="color-picker-inline" id="customBgPicker" value="#4f8cff" />
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Export</h2>
+            <div class="row-actions compact" style="margin-bottom:8px">
+              <button class="btn small" id="downloadPngBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download PNG
+              </button>
+              <button class="btn small" id="downloadJpgBtn">Download JPG</button>
+              <button class="btn small" id="copyPngBtn">Copy to clipboard</button>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer">
+              <input type="checkbox" id="fillBgCheckbox" />
+              Fill background color when exporting
+            </label>
+          </section>
+
+          <section class="card">
+            <h2>Stats</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+              <div style="color:var(--muted)">Image size</div>
+              <div style="font-family:var(--mono);text-align:right" id="statSize">—</div>
+              <div style="color:var(--muted)">Removed pixels</div>
+              <div style="font-family:var(--mono);text-align:right" id="statRemoved">—</div>
+              <div style="color:var(--muted)">Remaining</div>
+              <div style="font-family:var(--mono);text-align:right" id="statRemaining">—</div>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </aside>
+  </main>
+
+  <div class="modal-backdrop" id="urlModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3>Load image from URL</h3>
+      <p>Paste a direct link to an image file. The server must allow cross-origin reads (<code>CORS</code>).</p>
+      <input class="input" id="urlInput" type="url" placeholder="https://example.com/photo.jpg" autocomplete="off" spellcheck="false" />
+      <div class="modal-actions">
+        <button class="btn" id="urlCancel">Cancel</button>
+        <button class="btn primary" id="urlLoad">Load image</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="fileInput" accept="image/*" hidden />
+
+<script src="{{ url_for('static', filename='js/bg.js') }}"></script>
+</body>
+</html>

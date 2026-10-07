@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#1e5a77">
+    <title>Apollobery.AI · ChromaDeck | Image Color Breakdown</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/full_color_breakdown.css') }}">
+</head>
+<body>
+<div class="container">
+    <!-- Top bar: Home button + dark mode toggle -->
+    <div class="top-actions">
+        <a href="{{ url_for('homepage') }}" class="home-btn" id="homeButton">
+            🏠 Home
+        </a>
+        <div class="theme-switch">
+            <span class="toggle-label">🌓 Dark mode</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- ─── HEADER WITH LOGO ─── -->
+    <div class="header">
+        <div class="brand-lockup">
+            <!-- LOGO IMAGE (falls back to 🎨 if logo.png is missing) -->
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="HelaBerry Logo" class="brand-logo" id="brandLogo"
+                 onerror="this.style.display='none'; var f=document.getElementById('brandFallbackIcon'); if(f){f.style.display='inline-block';}">
+            <em class="brand-fallback" id="brandFallbackIcon">🎨</em>
+            <h1>HelaBerry · HelaDeck</h1>
+        </div>
+        <div class="sub">full image color breakdown — every pixel, every hue</div>
+    </div>
+
+    <div class="upload-card">
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-icon">🖼️🔍</div>
+            <div>Drag & drop image here or</div>
+            <label class="file-label" for="fileInput">Select from device</label>
+            <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp, image/bmp">
+            <div style="font-size: 0.7rem; margin-top: 12px; opacity: 0.7;">JPG, PNG, WebP · up to 50MB</div>
+        </div>
+        <div class="preview-area" id="previewContainer" style="display: none;">
+            <img id="previewImage" class="preview-img" alt="preview">
+        </div>
+        <div id="loadingIndicator" style="display: flex; justify-content: center; min-height: 50px;"></div>
+    </div>
+
+    <div id="resultsPanel" style="display: none;">
+        <div class="stats-bar">
+            <div class="stats-left">
+                <span>🎨 <span id="totalColorsCount">0</span> unique colors</span>
+                <span>📸 <span id="analyzedPixels">0</span> pixels analyzed</span>
+            </div>
+            <div class="btn-group">
+                <button id="copyAllHexBtn" class="btn">📋 Copy all HEX</button>
+                <button id="exportCSVBtn" class="btn">📎 Export CSV</button>
+                <button id="exportJSONBtn" class="btn">📄 Export JSON</button>
+            </div>
+        </div>
+        <div id="colorGridContainer" class="color-grid"></div>
+        <div id="infoMessage" class="info-message" style="display: none;"></div>
+    </div>
+    <div class="footer-note">
+        💡 Each unique RGB color appears as a separate card. Click any color to copy its hex code.<br>
+        For huge images (>700k pixels), analysis uses a scaled canvas but preserves all distinct colors.
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/full_color_breakdown.js') }}"></script>
+</body>
+</html>

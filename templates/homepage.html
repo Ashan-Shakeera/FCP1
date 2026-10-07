@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+<title>HelaBerry · Creative Studio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<!-- ===== EXTERNAL CSS ===== -->
+<link rel="stylesheet" href="/static/styles/homepage.css" />
+</head>
+<body>
+
+<!-- ==================== SPLASH SCREEN ==================== -->
+<div id="hbSplash" role="status" aria-live="polite" aria-label="Loading HelaBerry">
+  <div class="splash-logo-wrap">
+    <img src="/static/images/logo.png" alt="HelaBerry" class="splash-logo"
+         onerror="this.remove();var f=document.getElementById('splashFallback');if(f)f.style.display='flex';" />
+    <div class="splash-logo-fallback" id="splashFallback">H</div>
+  </div>
+  <div class="splash-name">HelaBerry</div>
+  <div class="splash-sub">creative studio</div>
+  <div class="splash-bar"><span></span></div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand" id="brandLink">
+    <div class="brand-icon has-logo" id="brandIcon">
+      <img src="/static/images/logo.png" alt="HelaBerry logo"
+           onerror="this.remove();var b=document.getElementById('brandIcon');b.classList.remove('has-logo');b.textContent='H';" />
+    </div>
+    <div>
+      <div class="brand-name">HelaBerry</div>
+      <div class="brand-sub">creative studio</div>
+    </div>
+  </div>
+
+  <div class="user-card" id="userCard">
+    <div class="user-card-top">
+      <div class="user-avatar" id="userAvatarSidebar">H</div>
+      <div class="user-meta">
+        <div class="user-name-big" id="userNameSidebar">Loading…</div>
+        <div class="user-role-big" id="userRoleSidebar"><i class="fas fa-user"></i> <span>—</span></div>
+      </div>
+    </div>
+    <div class="user-status" id="userStatusChip">
+      <span class="status-dot"></span> <span id="userStatusText">Online</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section-label">Main</div>
+    <a href="/homepage" class="nav-link active" id="navHome">
+      <i class="fas fa-house"></i> Home · Studio
+    </a>
+    <a href="/guide" class="nav-link guide">
+      <i class="fas fa-book-open"></i> Studio Guide
+    </a>
+    <a href="/designhub" class="nav-link">
+      <i class="fas fa-wand-magic-sparkles"></i> Design Hub
+    </a>
+    <a href="#paletteHunt" class="nav-link is-hunt" id="navPalette">
+      <i class="fas fa-swatchbook"></i> Palette Hunt
+    </a>
+    <a href="#hexService" class="nav-link is-new" id="navHex">
+      <i class="fas fa-eye-dropper"></i> Hex Preview
+    </a>
+
+    <div class="nav-section-label">Color Tools</div>
+    <a href="/prompt-palette" class="nav-link">
+      <i class="fas fa-comment-dots"></i> Prompt Palette
+    </a>
+    <a href="/color-compass" class="nav-link">
+      <i class="fas fa-book"></i> Color Compass
+    </a>
+    <a href="/full-breakdown" class="nav-link">
+      <i class="fas fa-chart-simple"></i> Full Breakdown
+    </a>
+    <a href="/main-extractor" class="nav-link">
+      <i class="fas fa-chart-line"></i> Main Extractor
+    </a>
+    <a href="/helaplatte" class="nav-link">
+      <i class="fas fa-layer-group"></i> HelaPlatte
+    </a>
+
+    <hr class="nav-divider">
+
+    <div class="nav-section-label">Design &amp; Art</div>
+    <a href="/design-studio" class="nav-link external">
+      <i class="fas fa-window-maximize"></i> Design Studio
+    </a>
+    <a href="/helaui" class="nav-link external">
+      <i class="fas fa-mobile-screen"></i> HelaUI
+    </a>
+    <a href="/mandala" class="nav-link external">
+      <i class="fas fa-snowflake"></i> Mandala
+    </a>
+    <a href="/vectorforge" class="nav-link external">
+      <i class="fas fa-bezier-curve"></i> VectorForge
+    </a>
+    <a href="/paint" class="nav-link external">
+      <i class="fas fa-paintbrush"></i> Live Painting
+    </a>
+    <a href="/linelab" class="nav-link external">
+      <i class="fas fa-pen-nib"></i> LineLab
+    </a>
+
+    <hr class="nav-divider">
+
+    <div class="nav-section-label">Image &amp; More</div>
+    <a href="/image-studio" class="nav-link external">
+      <i class="fas fa-scissors"></i> Image Studio
+    </a>
+    <a href="/helacanvas" class="nav-link external">
+      <i class="fas fa-image"></i> HelaCanvas
+    </a>
+    <a href="/fashion" class="nav-link external">
+      <i class="fas fa-tshirt"></i> Fashion Matcher
+    </a>
+    <a href="/interior" class="nav-link external">
+      <i class="fas fa-couch"></i> Interior Studio
+    </a>
+    <a href="/color-mix" class="nav-link external">
+      <i class="fas fa-flask"></i> Guess the Mix
+    </a>
+    <a href="/sign" class="nav-link external">
+      <i class="fas fa-sign-hanging"></i> Sign Studio
+    </a>
+    <a href="/dashboard" class="nav-link external">
+      <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+    <a href="/" class="nav-link external">
+      <i class="fas fa-comments"></i> HelaBerry Chat
+    </a>
+    <a href="/signinup" class="nav-link external">
+      <i class="fas fa-right-to-bracket"></i> Sign In / Up
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <i class="fas fa-copyright"></i> 2025 · HelaBerry
+    <span style="margin-left:auto;font-size:.72rem;">🍓</span>
+  </div>
+</aside>
+
+<!-- ==================== MAIN ==================== -->
+<main class="main" id="mainContent">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="topbar-title" id="topbarTitle">
+        HelaBerry <small>· Studio</small>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="search-box" id="searchBox" role="button" tabindex="0">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search tools…" id="globalSearch" readonly />
+        <kbd>Ctrl K</kbd>
+      </div>
+      <button class="icon-btn" id="notifBtn" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notif-dot" id="notifDot"></span>
+      </button>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">
+        <i class="fas fa-moon" id="themeIcon"></i>
+      </button>
+      <div class="header-user" id="headerUser" title="Account">
+        <div class="header-avatar" id="headerAvatar">H</div>
+        <div class="header-user-text">
+          <div class="header-user-name" id="headerUserName">Guest</div>
+          <div class="header-user-role" id="headerUserRole">Not signed in</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pageContainer"></div>
+</main>
+
+<!-- ==================== COMMAND PALETTE ==================== -->
+<div class="cmd-backdrop" id="cmdBackdrop">
+  <div class="cmd-panel">
+    <div class="cmd-input-wrap">
+      <i class="fas fa-magnifying-glass"></i>
+      <input type="text" class="cmd-input" id="cmdInput" placeholder="Search tools, colors, or type a hex…" autocomplete="off" />
+    </div>
+    <div class="cmd-list" id="cmdList"></div>
+  </div>
+</div>
+
+<!-- ===== EXTERNAL JS ===== -->
+<script src="/static/js/homepage.js"></script>
+
+</body>
+</html>

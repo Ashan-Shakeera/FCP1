@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mandala Studio · Pro Vector + Animation</title>
+<link rel="icon" type="image/png" href="/src/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<!-- ===== MAIN STYLESHEET ===== -->
+<link rel="stylesheet" href="/static/styles/mandela.css" />
+</head>
+<body>
+
+<!-- ===== SPLASH SCREEN (logo.png) ===== -->
+<div id="splash">
+  <div class="splash-mark">
+    <img src="/src/logo.png" alt="Mandala Studio logo" id="splashLogo" />
+    <span class="splash-fb" id="splashFallback">M</span>
+  </div>
+  <div class="splash-name">Mandala Studio</div>
+  <div class="splash-sub">Pro Vector + Animation</div>
+  <div class="splash-bar"><span id="splashBarFill"></span></div>
+</div>
+
+<!-- ===== AMBIENT BG ===== -->
+<div class="bg-amb"><div class="o o1"></div><div class="o o2"></div><div class="o o3"></div></div>
+<div class="bg-grid"></div>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <a class="tb-brand" href="/homepage">
+    <span class="mark" id="brandMark">
+      <img src="/src/logo.png" alt="Mandala Studio" id="brandLogo" />
+      <span class="mark-fb" id="brandFallback">M</span>
+    </span>
+    <span class="name">Mandala Studio</span>
+  </a>
+  <span class="tb-sep"></span>
+
+  <div class="tb-group">
+    <button class="tb-btn" id="btnNew" title="New project"><i class="fas fa-file"></i><span>New</span></button>
+    <button class="tb-btn" id="btnSave" title="Save project to browser"><i class="fas fa-floppy-disk"></i><span>Save</span></button>
+    <button class="tb-btn" id="btnLoad" title="Load saved project"><i class="fas fa-folder-open"></i><span>Load</span></button>
+  </div>
+
+  <span class="tb-sep"></span>
+
+  <div class="tb-group">
+    <button class="tb-btn icon" id="btnUndo" title="Undo (Ctrl+Z)"><i class="fas fa-rotate-left"></i></button>
+    <button class="tb-btn icon" id="btnRedo" title="Redo (Ctrl+Shift+Z)"><i class="fas fa-rotate-right"></i></button>
+    <button class="tb-btn icon" id="btnResetLayout" title="Reset panel layout"><i class="fas fa-table-columns"></i></button>
+  </div>
+
+  <span class="tb-flex"></span>
+
+  <div class="tb-group">
+    <button class="tb-btn green" id="btnPngT" title="Download PNG with transparent background"><i class="fas fa-download"></i><span>PNG transparent</span></button>
+    <button class="tb-btn primary" id="btnPng" title="Download PNG (Ctrl+S)"><i class="fas fa-image"></i><span>PNG</span></button>
+    <button class="tb-btn gold" id="btnSvg" title="Download SVG vector"><i class="fas fa-bezier-curve"></i><span>SVG vector</span></button>
+    <button class="tb-btn gold" id="home" title="Homepage" onclick="window.location.href='/homepage'">
+      <i class="fas fa-house"></i><span>Homepage</span>
+    </button>
+  </div>
+
+  <span class="tb-sep"></span>
+
+  <div class="tb-group">
+    <button class="tb-btn icon" id="btnAnimate" title="Play / pause animation (Space)"><i class="fas fa-play"></i></button>
+    <button class="tb-btn icon" id="btnHelp" title="Shortcuts (?)"><i class="fas fa-keyboard"></i></button>
+  </div>
+</header>
+
+<!-- ===== APP ===== -->
+<div class="app" id="app">
+
+  <!-- ---------- TOOL RAIL ---------- -->
+  <aside class="rail" id="rail">
+    <div class="rail-lbl">Draw</div>
+    <button class="tool active" data-tool="brush" title="Brush (B)"><i class="fas fa-paintbrush"></i><span>Brush</span></button>
+    <button class="tool" data-tool="eraser" title="Eraser (E)"><i class="fas fa-eraser"></i><span>Eraser</span></button>
+    <button class="tool" data-tool="fill" title="Bucket Fill (G)"><i class="fas fa-fill-drip"></i><span>Fill</span></button>
+    <button class="tool" data-tool="gradient" title="Radial Gradient (H)"><i class="fas fa-circle-half-stroke"></i><span>Grad</span></button>
+
+    <div class="rail-lbl">Shape</div>
+    <button class="tool" data-tool="line" title="Line (L)"><i class="fas fa-slash"></i><span>Line</span></button>
+    <button class="tool" data-tool="arc" title="Arc (A)"><i class="fas fa-circle-notch"></i><span>Arc</span></button>
+    <button class="tool" data-tool="circle" title="Circle (C)"><i class="far fa-circle"></i><span>Circle</span></button>
+    <button class="tool" data-tool="polygon" title="Polygon (P)"><i class="fas fa-draw-polygon"></i><span>Poly</span></button>
+    <button class="tool" data-tool="star" title="Star (S)"><i class="fas fa-star"></i><span>Star</span></button>
+    <button class="tool" data-tool="petal" title="Petal (F)"><i class="fas fa-leaf"></i><span>Petal</span></button>
+
+    <div class="rail-lbl">Stamp</div>
+    <button class="tool" data-tool="dot" title="Dot Beads (D)"><i class="fas fa-braille"></i><span>Dots</span></button>
+    <button class="tool" data-tool="spray" title="Spray (R)"><i class="fas fa-spray-can"></i><span>Spray</span></button>
+    <button class="tool" data-tool="text" title="Text (T)"><i class="fas fa-font"></i><span>Text</span></button>
+
+    <div class="rail-lbl">Utility</div>
+    <button class="tool" data-tool="picker" title="Colour Picker (I)"><i class="fas fa-eye-dropper"></i><span>Pick</span></button>
+    <button class="tool" data-tool="move" title="Move / Pan canvas (M or middle-drag)"><i class="fas fa-hand"></i><span>Move</span></button>
+  </aside>
+
+  <!-- ---------- MOVE BAR (rail | stage) ---------- -->
+  <div class="splitter" id="splitRail" title="Drag to resize the tool rail · double-click to reset"></div>
+
+  <!-- ---------- STAGE ---------- -->
+  <section class="stage-area">
+    <div class="viewport" id="viewport">
+      <div class="stage" id="stage">
+        <canvas id="refCanvas" width="1000" height="1000"></canvas>
+        <canvas id="viewCanvas" width="1000" height="1000"></canvas>
+        <canvas id="guideCanvas" width="1000" height="1000"></canvas>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <div class="sb-it"><i class="fas fa-vector-square"></i> <b>1000 × 1000</b></div>
+      <div class="sb-it"><i class="fas fa-snowflake"></i> <b id="sbSeg">12</b><span id="sbMirror"> · mirror</span></div>
+      <div class="sb-it"><i class="fas fa-layer-group"></i> <b id="sbLayer">Layer 1</b></div>
+      <div class="sb-it"><i class="fas fa-bezier-curve"></i> <b id="sbVec">0</b> vectors</div>
+      <div class="sb-it"><i class="fas fa-crosshairs"></i> <b id="sbPos">0, 0</b></div>
+      <div class="sb-it"><i class="fas fa-toolbox"></i> <b id="sbTool">Brush</b></div>
+      <div class="sb-sp"></div>
+      <div class="zoom">
+        <button id="zoomOut" title="Zoom out"><i class="fas fa-minus"></i></button>
+        <span id="zoomLabel">100%</span>
+        <button id="zoomIn" title="Zoom in"><i class="fas fa-plus"></i></button>
+        <button id="zoomFit" title="Fit to window"><i class="fas fa-expand"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- MOVE BAR (stage | panel) ---------- -->
+  <div class="splitter" id="splitPanel" title="Drag to resize the panel · double-click to reset"></div>
+
+  <!-- ---------- RIGHT PANEL ---------- -->
+  <aside class="panel" id="panel">
+    <div class="tabs">
+      <button class="tab active" data-tab="sym"><i class="fas fa-snowflake"></i>Symm</button>
+      <button class="tab" data-tab="brush"><i class="fas fa-paintbrush"></i>Brush</button>
+      <button class="tab" data-tab="shape"><i class="fas fa-shapes"></i>Shape</button>
+      <button class="tab" data-tab="layers"><i class="fas fa-layer-group"></i>Layers</button>
+      <button class="tab" data-tab="guide"><i class="fas fa-compass"></i>Guide</button>
+      <button class="tab" data-tab="gen"><i class="fas fa-wand-magic-sparkles"></i>Gen</button>
+      <button class="tab" data-tab="animate"><i class="fas fa-film"></i>Anim</button>
+      <button class="tab" data-tab="export"><i class="fas fa-download"></i>Export</button>
+    </div>
+
+    <div class="tab-body">
+
+      <!-- ============ SYMMETRY ============ -->
+      <div class="pane active" data-pane="sym">
+        <div class="sec">
+          <div class="sec-t">Symmetry Mode</div>
+          <div class="btn-grid g3">
+            <button class="btn btn-outline" data-symmode="radial">Radial</button>
+            <button class="btn btn-outline active" data-symmode="dihedral">Mirror</button>
+            <button class="btn btn-outline" data-symmode="spiral">Spiral</button>
+          </div>
+          <div class="btn-grid g3" style="margin-top:6px;">
+            <button class="btn btn-outline" data-symmode="kaleido">Kaleido</button>
+            <button class="btn btn-outline" data-symmode="wave">Wave</button>
+            <button class="btn btn-outline" data-symmode="none">None</button>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Radial Configuration</div>
+          <div class="fld">
+            <div class="fld-h"><label>Segments</label><span class="val" id="vSeg">12</span></div>
+            <input type="range" id="rSeg" min="1" max="96" step="1" value="12" />
+          </div>
+          <div class="fld">
+            <div class="fld-h"><label>Rotation</label><span class="val" id="vRot">0°</span></div>
+            <input type="range" id="rRot" min="0" max="360" step="1" value="0" />
+          </div>
+          <div class="fld" id="spiralField" style="display:none;">
+            <div class="fld-h"><label>Spiral factor</label><span class="val" id="vSpiral">0.92</span></div>
+            <input type="range" id="rSpiral" min="60" max="100" step="1" value="92" />
+          </div>
+          <label class="switch">
+            <span><i class="fas fa-clone"></i>Mirror within segment</span>
+            <input type="checkbox" id="cMirror" checked /><span class="tr"></span>
+          </label>
+          <label class="switch">
+            <span><i class="fas fa-magnet"></i>Snap to axis</span>
+            <input type="checkbox" id="cSnap" /><span class="tr"></span>
+          </label>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Quick Presets</div>
+          <div class="btn-grid g4">
+            <button class="btn btn-outline" data-preset="4">4×</button>
+            <button class="btn btn-outline" data-preset="6">6×</button>
+            <button class="btn btn-outline" data-preset="8">8×</button>
+            <button class="btn btn-outline" data-preset="12">12×</button>
+            <button class="btn btn-outline" data-preset="16">16×</button>
+            <button class="btn btn-outline" data-preset="24">24×</button>
+            <button class="btn btn-outline" data-preset="36">36×</button>
+            <button class="btn btn-outline" data-preset="48">48×</button>
+          </div>
+        </div>
+        <div class="hint"><b>Radial</b> rotates N times · <b>Mirror</b> adds reflection · <b>Spiral</b> scales copies · <b>Kaleido</b> mirrors every axis · <b>Wave</b> sinusoidal offset.</div>
+      </div>
+
+      <!-- ============ BRUSH ============ -->
+      <div class="pane" data-pane="brush">
+        <div class="sec">
+          <div class="sec-t">Colour</div>
+          <div class="col-row">
+            <input type="color" class="col-pick" id="colorPick" value="#a29bfe" />
+            <div style="flex:1;min-width:0;"><input type="text" class="txt" id="colorHex" value="#a29bfe" spellcheck="false" /></div>
+          </div>
+          <div class="pal" id="palette"></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Colour Harmony</div>
+          <div class="btn-grid g4">
+            <button class="btn btn-outline" data-harmony="analogous">Analog</button>
+            <button class="btn btn-outline" data-harmony="complement">Comp</button>
+            <button class="btn btn-outline" data-harmony="triadic">Triad</button>
+            <button class="btn btn-outline" data-harmony="tetradic">Tetrad</button>
+          </div>
+          <div class="pal" id="harmonyPalette" style="margin-top:8px;"></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Stroke</div>
+          <div class="fld"><div class="fld-h"><label>Size</label><span class="val" id="vSize">6</span></div><input type="range" id="rSize" min="1" max="140" step="1" value="6" /></div>
+          <div class="fld"><div class="fld-h"><label>Opacity</label><span class="val" id="vOpa">100%</span></div><input type="range" id="rOpa" min="5" max="100" step="1" value="100" /></div>
+          <div class="fld"><div class="fld-h"><label>Glow</label><span class="val" id="vGlow">0</span></div><input type="range" id="rGlow" min="0" max="80" step="1" value="0" /></div>
+          <div class="fld"><div class="fld-h"><label>Smoothing</label><span class="val" id="vSmooth">0.35</span></div><input type="range" id="rSmooth" min="0" max="90" step="1" value="35" /></div>
+          <div class="fld"><div class="fld-h"><label>Style</label></div>
+            <select id="sStyle">
+              <option value="solid">Solid</option>
+              <option value="soft">Soft / airbrush</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+              <option value="calligraphy">Calligraphy</option>
+            </select>
+          </div>
+          <label class="switch"><span><i class="fas fa-feather"></i>Pressure taper</span><input type="checkbox" id="cTaper" checked /><span class="tr"></span></label>
+          <label class="switch"><span><i class="fas fa-rainbow"></i>Rainbow (angle hue)</span><input type="checkbox" id="cRainbow" /><span class="tr"></span></label>
+        </div>
+        <div class="hint"><kbd>B</kbd> brush · <kbd>E</kbd> eraser · <kbd>G</kbd> fill · <kbd>[</kbd> <kbd>]</kbd> size · <kbd>M</kbd> move</div>
+      </div>
+
+      <!-- ============ SHAPE ============ -->
+      <div class="pane" data-pane="shape">
+        <div class="sec">
+          <div class="sec-t">Polygon</div>
+          <div class="fld"><div class="fld-h"><label>Sides</label><span class="val" id="vSides">6</span></div><input type="range" id="rSides" min="3" max="32" step="1" value="6" /></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Star</div>
+          <div class="fld"><div class="fld-h"><label>Points</label><span class="val" id="vPoints">5</span></div><input type="range" id="rPoints" min="3" max="32" step="1" value="5" /></div>
+          <div class="fld"><div class="fld-h"><label>Inner ratio</label><span class="val" id="vInset">45%</span></div><input type="range" id="rInset" min="10" max="95" step="1" value="45" /></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Petal</div>
+          <div class="fld"><div class="fld-h"><label>Width</label><span class="val" id="vPetal">40%</span></div><input type="range" id="rPetal" min="5" max="100" step="1" value="40" /></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Stamps</div>
+          <div class="fld"><div class="fld-h"><label>Dot spacing</label><span class="val" id="vSpacing">18</span></div><input type="range" id="rSpacing" min="4" max="120" step="1" value="18" /></div>
+          <div class="fld"><div class="fld-h"><label>Dot size</label><span class="val" id="vDotSize">6</span></div><input type="range" id="rDotSize" min="1" max="60" step="1" value="6" /></div>
+          <div class="fld"><div class="fld-h"><label>Spray radius</label><span class="val" id="vSprR">60</span></div><input type="range" id="rSprR" min="5" max="280" step="1" value="60" /></div>
+          <div class="fld"><div class="fld-h"><label>Spray density</label><span class="val" id="vSprD">24</span></div><input type="range" id="rSprD" min="3" max="120" step="1" value="24" /></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Text</div>
+          <div class="fld"><div class="fld-h"><label>Font size</label><span class="val" id="vFontSize">72</span></div><input type="range" id="rFontSize" min="10" max="400" step="1" value="72" /></div>
+          <div class="fld"><div class="fld-h"><label>Font family</label></div>
+            <select id="sFont">
+              <option value="Inter, sans-serif">Inter</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="'Times New Roman', serif">Times</option>
+              <option value="'Courier New', monospace">Courier</option>
+              <option value="Impact, sans-serif">Impact</option>
+            </select>
+          </div>
+          <label class="switch"><span><i class="fas fa-bold"></i>Bold</span><input type="checkbox" id="cBold" /><span class="tr"></span></label>
+          <label class="switch"><span><i class="fas fa-italic"></i>Italic</span><input type="checkbox" id="cItalic" /><span class="tr"></span></label>
+        </div>
+        <label class="switch"><span><i class="fas fa-fill-drip"></i>Fill closed shapes</span><input type="checkbox" id="cFill" /><span class="tr"></span></label>
+      </div>
+
+      <!-- ============ LAYERS ============ -->
+      <div class="pane" data-pane="layers">
+        <div class="sec">
+          <div class="sec-t">Layers</div>
+          <div class="btn-grid g3" style="margin-bottom:8px;">
+            <button class="btn btn-outline" id="btnAddLayer"><i class="fas fa-plus"></i> Add</button>
+            <button class="btn btn-outline" id="btnDupLayer"><i class="fas fa-clone"></i> Dup</button>
+            <button class="btn btn-outline" id="btnDelLayer"><i class="fas fa-trash"></i> Del</button>
+          </div>
+          <div class="layer-list" id="layerList"></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Properties</div>
+          <div class="fld"><div class="fld-h"><label>Name</label></div><input type="text" class="txt" id="layerName" /></div>
+          <div class="fld"><div class="fld-h"><label>Opacity</label><span class="val" id="vLayerOpa">100%</span></div><input type="range" id="rLayerOpa" min="0" max="100" step="1" value="100" /></div>
+          <div class="fld"><div class="fld-h"><label>Blend mode</label></div>
+            <select id="sLayerBlend">
+              <option value="source-over">Normal</option>
+              <option value="multiply">Multiply</option>
+              <option value="screen">Screen</option>
+              <option value="overlay">Overlay</option>
+              <option value="lighter">Add (lighter)</option>
+              <option value="difference">Difference</option>
+              <option value="hue">Hue</option>
+              <option value="saturation">Saturation</option>
+              <option value="color">Color</option>
+              <option value="luminosity">Luminosity</option>
+            </select>
+          </div>
+          <div class="btn-grid" style="margin-top:8px;">
+            <button class="btn btn-outline" id="btnLayerUp"><i class="fas fa-arrow-up"></i> Up</button>
+            <button class="btn btn-outline" id="btnLayerDown"><i class="fas fa-arrow-down"></i> Down</button>
+          </div>
+          <div class="btn-grid" style="margin-top:6px;">
+            <button class="btn btn-outline" id="btnLayerFlip"><i class="fas fa-arrows-rotate"></i> Flip H</button>
+            <button class="btn btn-outline" id="btnLayerClear"><i class="fas fa-eraser"></i> Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ GUIDE ============ -->
+      <div class="pane" data-pane="guide">
+        <div class="sec">
+          <div class="sec-t">Construction Guides</div>
+          <label class="switch"><span><i class="fas fa-eye"></i>Show guides</span><input type="checkbox" id="cGuides" checked /><span class="tr"></span></label>
+          <label class="switch"><span><i class="fas fa-star-of-life"></i>Symmetry axes</span><input type="checkbox" id="cAxes" checked /><span class="tr"></span></label>
+          <label class="switch"><span><i class="fas fa-bullseye"></i>Centre marker</span><input type="checkbox" id="cCenter" checked /><span class="tr"></span></label>
+          <label class="switch"><span><i class="fas fa-border-all"></i>Polar grid</span><input type="checkbox" id="cPolarGrid" /><span class="tr"></span></label>
+          <label class="switch"><span><i class="fas fa-ruler-combined"></i>Golden ratio spiral</span><input type="checkbox" id="cGolden" /><span class="tr"></span></label>
+          <div class="fld" style="margin-top:8px;"><div class="fld-h"><label>Concentric rings</label><span class="val" id="vRings">6</span></div><input type="range" id="rRings" min="0" max="36" step="1" value="6" /></div>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Paper Background</div>
+          <div class="col-row">
+            <input type="color" class="col-pick" id="bgPick" value="#0b1020" />
+            <div style="flex:1;">
+              <div class="btn-grid g4">
+                <button class="btn btn-outline" data-bg="#0b1020">Navy</button>
+                <button class="btn btn-outline" data-bg="#000000">Black</button>
+                <button class="btn btn-outline" data-bg="#f5f3ef">Cream</button>
+                <button class="btn btn-outline" data-bg="#ffffff">White</button>
+              </div>
+            </div>
+          </div>
+          <label class="switch" style="margin-top:6px;"><span><i class="fas fa-chess-board"></i>Transparent (checkerboard preview)</span><input type="checkbox" id="cTransBg" /><span class="tr"></span></label>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Reference Image</div>
+          <div class="btn-grid">
+            <button class="btn btn-outline" id="btnRefImport"><i class="fas fa-image"></i> Import</button>
+            <button class="btn btn-outline" id="btnRefClear"><i class="fas fa-xmark"></i> Remove</button>
+          </div>
+          <div class="fld" style="margin-top:8px;"><div class="fld-h"><label>Opacity</label><span class="val" id="vRefOpa">35%</span></div><input type="range" id="rRefOpa" min="0" max="100" step="1" value="35" /></div>
+        </div>
+      </div>
+
+      <!-- ============ GENERATE ============ -->
+      <div class="pane" data-pane="gen">
+        <div class="sec">
+          <div class="sec-t">Ring Generator</div>
+          <div class="fld"><div class="fld-h"><label>Radius</label><span class="val" id="vRingR">320</span></div><input type="range" id="rRingR" min="20" max="490" step="1" value="320" /></div>
+          <div class="fld"><div class="fld-h"><label>Element size</label><span class="val" id="vRingS">46</span></div><input type="range" id="rRingS" min="4" max="200" step="1" value="46" /></div>
+          <div class="fld"><div class="fld-h"><label>Element</label></div>
+            <select id="sRingType">
+              <option value="petal">Petal (leaf)</option>
+              <option value="dot">Dot bead</option>
+              <option value="triangle">Triangle</option>
+              <option value="diamond">Diamond</option>
+              <option value="scallop">Scallop arc</option>
+              <option value="spoke">Spoke line</option>
+              <option value="teardrop">Teardrop</option>
+              <option value="lens">Lens / almond</option>
+              <option value="sunburst">Sunburst</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" id="btnGenRing"><i class="fas fa-wand-magic-sparkles"></i> Generate Ring</button>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Auto Mandala</div>
+          <button class="btn btn-primary btn-block btn-lg" id="btnAuto"><i class="fas fa-hat-wizard"></i> Build Full Mandala</button>
+          <button class="btn btn-outline btn-block" id="btnAutoRandom" style="margin-top:7px;"><i class="fas fa-shuffle"></i> Random Mandala</button>
+        </div>
+        <div class="sec">
+          <div class="sec-t">Templates</div>
+          <div class="tpl-g">
+            <button class="tpl" data-tpl="flower"><i class="fas fa-spa"></i><span>Flower of Life</span><small>sacred</small></button>
+            <button class="tpl" data-tpl="lotus"><i class="fas fa-leaf"></i><span>Lotus</span><small>8 petals</small></button>
+            <button class="tpl" data-tpl="sunburst"><i class="fas fa-sun"></i><span>Sunburst</span><small>rays</small></button>
+            <button class="tpl" data-tpl="web"><i class="fas fa-circle-nodes"></i><span>Spider Web</span><small>radial</small></button>
+            <button class="tpl" data-tpl="mandala"><i class="fas fa-compass-drafting"></i><span>Classic</span><small>layered</small></button>
+            <button class="tpl" data-tpl="spiral"><i class="fas fa-hurricane"></i><span>Spiral</span><small>phi</small></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ ANIMATION ============ -->
+      <div class="pane" data-pane="animate">
+        <div class="sec">
+          <div class="sec-t">Playback</div>
+          <div class="btn-grid g3">
+            <button class="btn btn-primary" id="animPlayBtn"><i class="fas fa-play"></i> Play</button>
+            <button class="btn btn-outline" id="animStopBtn"><i class="fas fa-stop"></i> Stop</button>
+            <button class="btn btn-outline active" id="animLoopBtn"><i class="fas fa-repeat"></i> Loop</button>
+          </div>
+          <div class="fld" style="margin-top:9px;">
+            <div class="fld-h"><label>Timeline</label><span class="val" id="vAnimTime">0.00s</span></div>
+            <input type="range" id="rAnimTime" min="0" max="1000" step="1" value="0" />
+          </div>
+          <div class="fld">
+            <div class="fld-h"><label>Master duration</label><span class="val" id="vAnimDur">8.0s</span></div>
+            <input type="range" id="rAnimDur" min="500" max="30000" step="250" value="8000" />
+          </div>
+          <div class="fld">
+            <div class="fld-h"><label>Speed</label><span class="val" id="vAnimSpeed">1.00×</span></div>
+            <input type="range" id="rAnimSpeed" min="10" max="400" step="5" value="100" />
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Layer Tracks</div>
+          <div class="btn-grid g3" style="margin-bottom:8px;">
+            <button class="btn btn-outline" id="btnTrackStagger"><i class="fas fa-stairs"></i> Stagger</button>
+            <button class="btn btn-outline" id="btnTrackSync"><i class="fas fa-equals"></i> Sync</button>
+            <button class="btn btn-outline" id="btnTrackReset"><i class="fas fa-rotate-left"></i> Reset</button>
+          </div>
+          <div class="track-list" id="trackList"></div>
+          <div class="hint" style="margin-top:8px;">
+            Each layer has its <b>own timeline</b>. Set a <b>start offset</b>, <b>speed</b> and
+            <b>loop length</b> per layer to create trailing, counter-rotating or staggered motion.
+            The white line is the live playhead.
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Spin</div>
+          <div class="anim-prop" id="ap-rotation">
+            <label class="switch"><span><i class="fas fa-arrows-rotate"></i>Rotate canvas</span><input type="checkbox" id="aRotOn" checked /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Amount</label><span class="val" id="vARot">360°</span></div><input type="range" id="rARot" min="0" max="1440" step="5" value="360" /></div>
+            <div class="fld"><div class="fld-h"><label>Direction</label></div>
+              <div class="btn-grid g3">
+                <button class="btn btn-outline active" data-rot-dir="1">CW</button>
+                <button class="btn btn-outline" data-rot-dir="-1">CCW</button>
+                <button class="btn btn-outline" data-rot-dir="0">Osc</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Breathe</div>
+          <div class="anim-prop" id="ap-scale">
+            <label class="switch"><span><i class="fas fa-up-right-and-down-left-from-center"></i>Scale pulse</span><input type="checkbox" id="aScaleOn" /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Amount</label><span class="val" id="vAScale">8%</span></div><input type="range" id="rAScale" min="1" max="80" step="1" value="8" /></div>
+            <div class="fld"><div class="fld-h"><label>Cycles per loop</label><span class="val" id="vAScaleF">1</span></div><input type="range" id="rAScaleF" min="1" max="12" step="1" value="1" /></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Fade / Pulse</div>
+          <div class="anim-prop" id="ap-opacity">
+            <label class="switch"><span><i class="fas fa-circle-half-stroke"></i>Opacity pulse</span><input type="checkbox" id="aOpacOn" /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Depth</label><span class="val" id="vAOpac">40%</span></div><input type="range" id="rAOpac" min="5" max="100" step="1" value="40" /></div>
+            <div class="fld"><div class="fld-h"><label>Cycles per loop</label><span class="val" id="vAOpacF">1</span></div><input type="range" id="rAOpacF" min="1" max="12" step="1" value="1" /></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Light Effects</div>
+          <div class="anim-prop" id="ap-glow">
+            <label class="switch"><span><i class="fas fa-sun"></i>Glow pulse</span><input type="checkbox" id="aGlowOn" /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Intensity</label><span class="val" id="vAGlow">0.60</span></div><input type="range" id="rAGlow" min="5" max="150" step="1" value="60" /></div>
+            <div class="fld"><div class="fld-h"><label>Cycles per loop</label><span class="val" id="vAGlowF">2</span></div><input type="range" id="rAGlowF" min="1" max="16" step="1" value="2" /></div>
+          </div>
+
+          <div class="anim-prop" id="ap-hue">
+            <label class="switch"><span><i class="fas fa-rainbow"></i>Hue cycle</span><input type="checkbox" id="aHueOn" /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Amount</label><span class="val" id="vAHue">360°</span></div><input type="range" id="rAHue" min="0" max="1440" step="5" value="360" /></div>
+          </div>
+
+          <div class="anim-prop" id="ap-flash">
+            <label class="switch"><span><i class="fas fa-bolt"></i>Flash strobe</span><input type="checkbox" id="aFlashOn" /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Brightness</label><span class="val" id="vAFlash">40%</span></div><input type="range" id="rAFlash" min="5" max="150" step="1" value="40" /></div>
+            <div class="fld"><div class="fld-h"><label>Cycles per loop</label><span class="val" id="vAFlashF">4</span></div><input type="range" id="rAFlashF" min="1" max="24" step="1" value="4" /></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Motion</div>
+          <div class="anim-prop" id="ap-wobble">
+            <label class="switch"><span><i class="fas fa-arrows-up-down-left-right"></i>Wobble drift</span><input type="checkbox" id="aWobOn" /><span class="tr"></span></label>
+            <div class="fld"><div class="fld-h"><label>Amplitude</label><span class="val" id="vAWob">10</span></div><input type="range" id="rAWob" min="1" max="100" step="1" value="10" /></div>
+            <div class="fld"><div class="fld-h"><label>Cycles per loop</label><span class="val" id="vAWobF">3</span></div><input type="range" id="rAWobF" min="1" max="24" step="1" value="3" /></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Presets</div>
+          <div class="tpl-g">
+            <button class="tpl" data-animpreset="spin"><i class="fas fa-arrows-rotate"></i><span>Spin</span><small>classic</small></button>
+            <button class="tpl" data-animpreset="breathe"><i class="fas fa-lungs"></i><span>Breathe</span><small>calm</small></button>
+            <button class="tpl" data-animpreset="hypno"><i class="fas fa-eye"></i><span>Hypnotic</span><small>spin + zoom</small></button>
+            <button class="tpl" data-animpreset="aurora"><i class="fas fa-rainbow"></i><span>Aurora</span><small>hue + glow</small></button>
+            <button class="tpl" data-animpreset="sparkle"><i class="fas fa-star"></i><span>Sparkle</span><small>flash</small></button>
+            <button class="tpl" data-animpreset="pulse"><i class="fas fa-heart-pulse"></i><span>Heartbeat</span><small>pulse</small></button>
+            <button class="tpl" data-animpreset="float"><i class="fas fa-feather"></i><span>Float</span><small>wobble</small></button>
+            <button class="tpl" data-animpreset="none"><i class="fas fa-ban"></i><span>Reset</span><small>clear all</small></button>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Export Animation</div>
+          <div class="fld"><div class="fld-h"><label>Video size</label></div>
+            <select id="sAnimSize">
+              <option value="600">600 × 600</option>
+              <option value="800">800 × 800</option>
+              <option value="1000" selected>1000 × 1000</option>
+              <option value="1400">1400 × 1400</option>
+            </select>
+          </div>
+          <div class="fld"><div class="fld-h"><label>Frame rate</label></div>
+            <select id="sAnimFps">
+              <option value="24">24 fps</option>
+              <option value="30" selected>30 fps</option>
+              <option value="60">60 fps</option>
+            </select>
+          </div>
+          <label class="switch"><span><i class="fas fa-chess-board"></i>Transparent background</span><input type="checkbox" id="cAnimTrans" /><span class="tr"></span></label>
+
+          <button class="btn btn-primary btn-block btn-lg" id="btnRecordWebm" style="margin-top:9px;">
+            <i class="fas fa-video"></i> Record WebM (1 loop)
+          </button>
+          <button class="btn btn-gold btn-block" id="btnExportAnimSvg" style="margin-top:6px;">
+            <i class="fas fa-bezier-curve"></i> Animated SVG
+          </button>
+          <div class="hint" style="margin-top:8px;">
+            Recording plays <b>one full loop in real-time</b> with all per-layer timings applied.
+            Keep this tab focused. Animated SVG uses SMIL &amp; CSS — open in a browser or modern editor.
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ EXPORT ============ -->
+      <div class="pane" data-pane="export">
+        <div class="sec">
+          <div class="sec-t">Export Resolution</div>
+          <div class="fld"><div class="fld-h"><label>PNG scale</label></div>
+            <select id="sScale">
+              <option value="1">1000 × 1000 (1×)</option>
+              <option value="2" selected>2000 × 2000 (2×)</option>
+              <option value="3">3000 × 3000 (3×)</option>
+              <option value="4">4000 × 4000 (4×)</option>
+              <option value="6">6000 × 6000 (6×)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-head">
+            <div class="exp-ic png"><i class="fas fa-image"></i></div>
+            <div class="exp-tt"><h4>PNG with background</h4><p>Flattened, opaque · includes paper colour</p></div>
+          </div>
+          <div class="exp-actions">
+            <button class="btn btn-primary" id="btnPng2"><i class="fas fa-download"></i> Download</button>
+            <button class="btn btn-outline" id="btnCopyPng"><i class="fas fa-clipboard"></i> Copy</button>
+          </div>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-head">
+            <div class="exp-ic png-t"><i class="fas fa-clone"></i></div>
+            <div class="exp-tt"><h4>PNG transparent</h4><p>No background · alpha preserved</p></div>
+          </div>
+          <div class="exp-actions">
+            <button class="btn btn-success" id="btnPngT2"><i class="fas fa-download"></i> Download</button>
+            <button class="btn btn-outline" id="btnCopyPngT"><i class="fas fa-clipboard"></i> Copy</button>
+          </div>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-head">
+            <div class="exp-ic svg"><i class="fas fa-bezier-curve"></i></div>
+            <div class="exp-tt"><h4>SVG vector</h4><p>Scalable · editable · symmetry preserved</p></div>
+          </div>
+          <div class="exp-actions" style="grid-template-columns:1fr;">
+            <button class="btn btn-gold" id="btnSvg2"><i class="fas fa-download"></i> Download SVG</button>
+          </div>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-head">
+            <div class="exp-ic vid"><i class="fas fa-video"></i></div>
+            <div class="exp-tt"><h4>WebM video</h4><p>Animated · one full loop · alpha optional</p></div>
+          </div>
+          <div class="exp-actions" style="grid-template-columns:1fr;">
+            <button class="btn btn-primary" id="btnPngT3"><i class="fas fa-video"></i> Open animation tab</button>
+          </div>
+        </div>
+
+        <div class="sec" style="margin-top:18px;">
+          <div class="sec-t">Project File</div>
+          <div class="btn-grid">
+            <button class="btn btn-outline" id="btnSave2"><i class="fas fa-floppy-disk"></i> Save</button>
+            <button class="btn btn-outline" id="btnLoad2"><i class="fas fa-folder-open"></i> Load</button>
+          </div>
+          <div class="btn-grid" style="margin-top:6px;">
+            <button class="btn btn-outline" id="btnExportJSON"><i class="fas fa-file-code"></i> .json</button>
+            <button class="btn btn-outline" id="btnImportJSON"><i class="fas fa-upload"></i> Import</button>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-t">Danger Zone</div>
+          <div class="btn-grid">
+            <button class="btn btn-outline" id="btnClear"><i class="fas fa-eraser"></i> Clear layer</button>
+            <button class="btn btn-danger" id="btnReset"><i class="fas fa-trash-can"></i> Reset all</button>
+          </div>
+        </div>
+
+        <div class="hint" style="margin-top:12px;">
+          <b>SVG export</b> records every shape as a vector element with full symmetry transforms.
+          Brush strokes are exported as paths. Fill operations are exported as flat colours where possible.
+        </div>
+      </div>
+
+    </div>
+  </aside>
+</div>
+
+<!-- ===== MAIN SCRIPT ===== -->
+<script src="/static/js/mandela.js"></script>
+
+</body>
+</html>

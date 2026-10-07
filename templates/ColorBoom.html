@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Color Rider — Endless Color Matching Game</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/colorboom.css') }}">
+</head>
+<body>
+
+<div id="gameWrapper">
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="hud">
+        <div class="hud-left">
+            <div class="score-box">
+                <div class="score-label">Score</div>
+                <div id="scoreValue">0</div>
+            </div>
+        </div>
+        <div class="hud-right">
+            <div class="best-box">
+                <div class="best-label">Best</div>
+                <div id="bestValue">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="colorTarget">
+        <div class="target-label">Catch This Color</div>
+        <div id="targetOrb"></div>
+    </div>
+
+    <div id="comboPopup"></div>
+    <div id="flashOverlay"></div>
+    <div id="countdown"></div>
+
+    <div id="pauseIndicator">
+        <div class="pause-text">PAUSED</div>
+    </div>
+
+    <div id="startScreen">
+        <div class="title">COLOR RIDER</div>
+        <div class="subtitle">Endless Color Matching Runner</div>
+        <div class="instructions">
+            <div class="instruction-row">
+                <span class="key">SPACE</span>
+                <span>Jump over blocks</span>
+            </div>
+            <div class="instruction-row">
+                <span class="key">MATCH</span>
+                <span>Catch blocks matching your bike's color</span>
+            </div>
+            <div class="instruction-row">
+                <span class="key">AVOID</span>
+                <span>Wrong colors end the game instantly</span>
+            </div>
+        </div>
+        <button class="start-btn" id="startBtn">START GAME</button>
+    </div>
+
+    <div id="gameOverScreen">
+        <div class="gameover-title">GAME OVER</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="finalScore">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Best</div>
+                <div class="stat-value gold" id="finalBest">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Distance</div>
+                <div class="stat-value" id="finalDistance">0m</div>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button class="action-btn" id="retryBtn">PLAY AGAIN</button>
+            <button class="action-btn secondary" id="menuBtn">MAIN MENU</button>
+        </div>
+    </div>
+
+    <div id="mobileControls">
+        <div class="mobile-btn" id="mobileJump">JUMP</div>
+        <div class="mobile-btn" id="mobileRestart">RESTART</div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/colorboom.js') }}"></script>
+</body>
+</html>

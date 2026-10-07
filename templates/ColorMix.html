@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ChromaLens AI · Object-Aware Line Art Colorizer</title>
+
+<!-- TensorFlow.js + COCO-SSD for real object detection -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/colormix.css') }}" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= HEADER ================= -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <path d="M11 8v6M8 11h6"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>ChromaLens AI</h1>
+        <p>Object-aware line art colorizer · Detection + CV + ML pipeline</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <div class="pill">
+        <span class="dot" id="detectorDot"></span>
+        <span id="detectorStatus">Loading detector…</span>
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span>COCO-SSD + TF.js</span>
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span>Semantic palette</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= PIPELINE STRIP ================= -->
+  <section class="pipeline-strip">
+    <div class="pipe-step" data-step="1">
+      <div class="pipe-num">1</div>
+      <div>
+        <div class="pipe-label">Ingest</div>
+        <div class="pipe-sub">Load & normalize</div>
+      </div>
+    </div>
+    <div class="pipe-step" data-step="2">
+      <div class="pipe-num">2</div>
+      <div>
+        <div class="pipe-label">Detect</div>
+        <div class="pipe-sub">Object recognition</div>
+      </div>
+    </div>
+    <div class="pipe-step" data-step="3">
+      <div class="pipe-num">3</div>
+      <div>
+        <div class="pipe-label">Segment</div>
+        <div class="pipe-sub">Edge + flood fill</div>
+      </div>
+    </div>
+    <div class="pipe-step" data-step="4">
+      <div class="pipe-num">4</div>
+      <div>
+        <div class="pipe-label">Match</div>
+        <div class="pipe-sub">Semantic colors</div>
+      </div>
+    </div>
+    <div class="pipe-step" data-step="5">
+      <div class="pipe-num">5</div>
+      <div>
+        <div class="pipe-label">Render</div>
+        <div class="pipe-sub">Shaded output</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WORKSPACE ================= -->
+  <section class="workspace">
+
+    <!-- INPUT PANEL -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-head-left">
+          <div class="panel-icon blue">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div>
+            <div class="panel-title">Source Line Art</div>
+            <div class="panel-sub">Upload your black &amp; white drawing</div>
+          </div>
+        </div>
+        <span class="chip" id="inputChip">Awaiting upload</span>
+      </div>
+
+      <div class="stage" id="inputStage">
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <h3>Drop line art here</h3>
+          <p>Click to browse or drag &amp; drop. Works best with clear black outlines on white background.</p>
+          <span class="formats">PNG · JPG · WEBP · BMP — max 15 MB</span>
+        </div>
+        <canvas id="originalCanvas" width="600" height="600"></canvas>
+        <div class="detection-overlay" id="detectionOverlay"></div>
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp" hidden />
+      </div>
+    </div>
+
+    <!-- OUTPUT PANEL -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-head-left">
+          <div class="panel-icon purple">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8 5.8 21.3l2.4-7.4L2 9.4h7.6z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="panel-title">Colorized Result</div>
+            <div class="panel-sub">Object-aware semantic coloring</div>
+          </div>
+        </div>
+        <span class="chip" id="outputChip">Pending</span>
+      </div>
+
+      <div class="stage" id="outputStage">
+        <div class="empty-state" id="emptyResult">
+          <div class="halo">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </div>
+          <h4>Ready to colorize</h4>
+          <p>Upload line art, then press <strong>Run AI Pipeline</strong>. The system identifies objects and assigns matching colors.</p>
+        </div>
+
+        <canvas id="colorCanvas" width="600" height="600"></canvas>
+
+        <div class="proc-overlay" id="procOverlay">
+          <div class="loader">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+          </div>
+          <div class="proc-text" id="procText">Running AI pipeline…</div>
+          <div class="proc-sub" id="procSub">Initializing</div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= DETECTION REPORT ================= -->
+  <section class="detection-report" id="detectionReport">
+    <div class="report-header">
+      <div class="report-title">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span>Detected Objects &amp; Assigned Colors</span>
+      </div>
+      <span class="report-count" id="reportCount">0 objects</span>
+    </div>
+    <div class="report-grid" id="reportGrid"></div>
+  </section>
+
+  <!-- ================= CONTROLS ================= -->
+  <section class="controls">
+    <div class="controls-group">
+      <button class="btn btn-primary" id="colorizeBtn" disabled>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span>Run AI Pipeline</span>
+      </button>
+      <button class="btn btn-ghost" id="resetBtn" disabled>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7"/>
+          <polyline points="3 4 3 10 9 10"/>
+        </svg>
+        <span>Reset</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="toggleDetectionBtn" disabled>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span>Show detections</span>
+      </button>
+    </div>
+
+    <div class="settings">
+      <div class="setting">
+        <div class="setting-head">
+          <label for="saturationRange">Saturation</label>
+          <span class="value" id="saturationVal">1.00</span>
+        </div>
+        <input type="range" id="saturationRange" min="0.3" max="2.0" step="0.05" value="1.0" />
+      </div>
+      <div class="setting">
+        <div class="setting-head">
+          <label for="lineRange">Line strength</label>
+          <span class="value" id="lineVal">0.85</span>
+        </div>
+        <input type="range" id="lineRange" min="0.3" max="1.0" step="0.05" value="0.85" />
+      </div>
+      <div class="setting">
+        <div class="setting-head">
+          <label for="confidenceRange">Detection min</label>
+          <span class="value" id="confidenceVal">0.35</span>
+        </div>
+        <input type="range" id="confidenceRange" min="0.1" max="0.9" step="0.05" value="0.35" />
+      </div>
+      <div class="setting">
+        <div class="setting-head">
+          <label for="semanticRange">Semantic weight</label>
+          <span class="value" id="semanticVal">0.85</span>
+        </div>
+        <input type="range" id="semanticRange" min="0.0" max="1.0" step="0.05" value="0.85" />
+      </div>
+    </div>
+
+    <div class="controls-group">
+      <button class="btn btn-success" id="downloadBtn" disabled>
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Download PNG</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= STATUS ================= -->
+  <div class="status-bar">
+    <span class="status-indicator info" id="statusIndicator"></span>
+    <span class="status-msg" id="statusMsg">Initializing object detector…</span>
+  </div>
+
+  <footer class="app-footer">
+    <strong>ChromaLens AI</strong> · Object detection (COCO-SSD) + edge-aware segmentation + semantic color matching · 100% client-side
+  </footer>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="{{ url_for('static', filename='js/colormix.js') }}"></script>
+</body>
+</html>

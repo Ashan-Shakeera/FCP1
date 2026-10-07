@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+  <title>Helaberry · Live Painting Studio + AI</title>
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <!-- TensorFlow.js + COCO-SSD (AI Colorizer) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/linepro.css') }}" />
+</head>
+<body>
+
+<!-- =========================================================
+     SPLASH SCREEN
+========================================================== -->
+<div class="hb-splash" id="hbSplash" title="Click to skip">
+  <div class="hb-splash-inner">
+    <div class="hb-splash-logo-box" id="splashLogoBox">
+      <img class="hb-splash-logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry logo"
+           onerror="var p=this.parentElement;p.classList.add('no-logo');this.remove();" />
+      <span class="hb-splash-fallback">H</span>
+    </div>
+    <div class="hb-splash-name">Helaberry</div>
+    <div class="hb-splash-tag">Live Painting Studio + AI</div>
+    <div class="hb-splash-bar"><span></span></div>
+  </div>
+</div>
+
+<!-- =========================================================
+     NAVBAR
+========================================================== -->
+<nav class="hb-nav">
+  <a class="hb-nav-brand" href="{{ url_for('homepage') }}">
+    <span class="hb-nav-icon">
+      <img class="hb-nav-logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry logo"
+           onerror="var p=this.parentElement;p.classList.add('no-logo');this.remove();" />
+      <span class="hb-nav-fallback">H</span>
+    </span>
+    <span class="hb-nav-name">Helaberry</span>
+    <span class="hb-nav-tag">Studio + AI</span>
+  </a>
+  <div class="hb-nav-actions">
+    <a class="hb-btn hb-btn-home hb-btn-sm" href="{{ url_for('homepage') }}" id="navHomeBtn" title="Back to Home">
+      <i class="fas fa-house"></i> <span class="btn-label">Home</span>
+    </a>
+    <button class="hb-btn hb-btn-outline hb-btn-sm" id="navUploadBtn">
+      <i class="fas fa-cloud-arrow-up"></i> <span class="btn-label">Upload</span>
+    </button>
+    <button class="hb-btn hb-btn-gold hb-btn-sm" id="navAnalyzeBtn">
+      <i class="fas fa-chart-pie"></i> <span class="btn-label">Analyze</span>
+    </button>
+    <button class="hb-btn hb-btn-primary hb-btn-sm" id="navDownloadBtn">
+      <i class="fas fa-download"></i> <span class="btn-label">Export</span>
+    </button>
+  </div>
+</nav>
+
+<!-- =========================================================
+     BACKGROUND
+========================================================== -->
+<div class="hb-bg">
+  <div class="hb-orb hb-orb-1"></div>
+  <div class="hb-orb hb-orb-2"></div>
+  <div class="hb-orb hb-orb-3"></div>
+  <div class="hb-orb hb-orb-4"></div>
+</div>
+<div class="hb-grid"></div>
+
+<!-- =========================================================
+     STUDIO
+========================================================== -->
+<main class="studio">
+
+  <!-- ============ TOOLS PANEL ============ -->
+  <aside class="tools-panel">
+
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-image"></i> Canvas</div>
+      <button class="hb-btn hb-btn-outline hb-btn-block hb-btn-sm" id="uploadBtn">
+        <i class="fas fa-cloud-arrow-up"></i> Upload Line Art
+      </button>
+      <div class="hint">PNG · JPG · WEBP — max 1200px</div>
+    </div>
+
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-screwdriver-wrench"></i> Tools</div>
+      <div class="tool-grid">
+        <button class="tool-btn active" data-tool="brush" title="Brush (B)"><i class="fas fa-paintbrush"></i></button>
+        <button class="tool-btn" data-tool="eraser" title="Eraser (E)"><i class="fas fa-eraser"></i></button>
+        <button class="tool-btn" data-tool="fill" title="Fill (G)"><i class="fas fa-fill-drip"></i></button>
+        <button class="tool-btn" data-tool="picker" title="Eyedropper (I)"><i class="fas fa-eye-dropper"></i></button>
+        <button class="tool-btn" data-tool="select" title="Quick Select (W)"><i class="fas fa-wand-magic-sparkles"></i></button>
+      </div>
+    </div>
+
+    <div class="panel hb-glass" id="selectionPanel" style="display:none;">
+      <div class="panel-title"><i class="fas fa-wand-magic-sparkles"></i> Quick Select</div>
+      <div class="segmented cols-3" id="selModeGroup">
+        <button class="seg-btn active" data-mode="new" type="button">New</button>
+        <button class="seg-btn" data-mode="add" type="button">Add</button>
+        <button class="seg-btn" data-mode="subtract" type="button">Subtract</button>
+      </div>
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="thresholdSlider">Tolerance</label>
+        <span class="value" id="thresholdValue">32</span>
+      </div>
+      <input type="range" id="thresholdSlider" class="hb-range" min="5" max="100" value="32" />
+      <div class="hint" style="margin-top:2px;">Click a region · drag to expand</div>
+      <button class="hb-btn hb-btn-outline hb-btn-sm hb-btn-block" id="deselectBtn">
+        <i class="fas fa-xmark"></i> Deselect (Ctrl+D)
+      </button>
+    </div>
+
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-sliders"></i> Brush</div>
+      <div class="segmented cols-4" id="brushTypeGroup">
+        <button class="seg-btn active" data-brush="round" type="button" title="Round"><i class="fas fa-circle"></i></button>
+        <button class="seg-btn" data-brush="square" type="button" title="Square"><i class="fas fa-square"></i></button>
+        <button class="seg-btn" data-brush="marker" type="button" title="Marker"><i class="fas fa-marker"></i></button>
+        <button class="seg-btn" data-brush="spray" type="button" title="Airbrush"><i class="fas fa-spray-can"></i></button>
+      </div>
+
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="sizeSlider">Size</label>
+        <span class="value" id="sizeValue">14</span>
+      </div>
+      <input type="range" id="sizeSlider" class="hb-range" min="1" max="140" value="14" />
+
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="opacitySlider">Opacity</label>
+        <span class="value" id="opacityValue">100%</span>
+      </div>
+      <input type="range" id="opacitySlider" class="hb-range" min="5" max="100" value="100" />
+
+      <div class="slider-row" style="margin-top:4px;">
+        <label for="fillTolSlider">Fill Tolerance</label>
+        <span class="value" id="fillTolValue">42</span>
+      </div>
+      <input type="range" id="fillTolSlider" class="hb-range" min="5" max="120" value="42" />
+    </div>
+
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-clone"></i> Symmetry</div>
+      <div class="segmented cols-4" id="symmetryGroup">
+        <button class="seg-btn active" data-sym="off" type="button">Off</button>
+        <button class="seg-btn" data-sym="vertical" type="button">Vertical</button>
+        <button class="seg-btn" data-sym="horizontal" type="button">Horiz</button>
+        <button class="seg-btn" data-sym="quad" type="button">Quad</button>
+      </div>
+      <div class="hint">Mirror your strokes in real time</div>
+    </div>
+
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-palette"></i> Color Wheel</div>
+      <div class="wheel-wrap">
+        <canvas id="wheelCanvas" width="480" height="480"></canvas>
+      </div>
+
+      <div class="color-display" style="margin-top:4px;">
+        <label class="color-swatch-lg" id="colorSwatchLg" style="background:#7c6cf0;">
+          <input type="color" id="colorInput" value="#7c6cf0" />
+        </label>
+        <div class="color-info">
+          <input type="text" id="colorHexInput" class="color-hex-input" value="#7C6CF0" spellcheck="false" maxlength="7" />
+          <div class="color-name">Current Color</div>
+        </div>
+      </div>
+
+      <select class="hb-select" id="harmonySelect" title="Color harmony scheme">
+        <option value="free">🎨 Free — no harmony guide</option>
+        <option value="complementary">Complementary — 2 opposite hues</option>
+        <option value="analogous">Analogous — 3 neighbouring hues</option>
+        <option value="triadic">Triadic — 3 evenly spaced hues</option>
+        <option value="splitComplementary">Split-Complementary — 3 hues</option>
+        <option value="tetradic">Tetradic — 4 hues (rectangle)</option>
+        <option value="square">Square — 4 evenly spaced hues</option>
+        <option value="monochromatic">Monochromatic — 1 hue</option>
+      </select>
+
+      <div class="harmony-strip" id="harmonyStrip"></div>
+
+      <div class="panel-title" style="margin-top:6px;"><i class="fas fa-swatchbook"></i> Palette</div>
+      <div class="palette" id="palette"></div>
+
+      <div class="panel-title" style="margin-top:4px;"><i class="fas fa-clock-rotate-left"></i> Recent</div>
+      <div class="recent-row" id="recentRow"></div>
+    </div>
+
+    <div class="panel hb-glass">
+      <div class="panel-title"><i class="fas fa-bolt"></i> Actions</div>
+      <div class="action-grid">
+        <button class="hb-btn hb-btn-outline" id="undoBtn" title="Undo (Ctrl+Z)">
+          <i class="fas fa-rotate-left"></i> Undo
+        </button>
+        <button class="hb-btn hb-btn-outline" id="redoBtn" title="Redo (Ctrl+Shift+Z)">
+          <i class="fas fa-rotate-right"></i> Redo
+        </button>
+        <button class="hb-btn hb-btn-outline" id="toggleLinesBtn" title="Toggle line art (X)">
+          <i class="fas fa-eye-slash"></i> Lines
+        </button>
+        <button class="hb-btn hb-btn-danger" id="clearBtn" title="Clear all paint">
+          <i class="fas fa-trash-can"></i> Clear
+        </button>
+      </div>
+      <button class="hb-btn hb-btn-gold hb-btn-block" id="analyzeBtn" style="margin-top:2px;">
+        <i class="fas fa-chart-pie"></i> Analyze Color Theory
+      </button>
+      <button class="hb-btn hb-btn-primary hb-btn-block" id="downloadBtn">
+        <i class="fas fa-download"></i> Download PNG
+      </button>
+      <a class="hb-btn hb-btn-home hb-btn-block" href="{{ url_for('homepage') }}" id="panelHomeBtn">
+        <i class="fas fa-house"></i> Back to Home
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- ============ CANVAS AREA ============ -->
+  <section class="canvas-area" id="canvasArea">
+    <div class="canvas-stage" id="canvasStage">
+      <canvas id="lineCanvas"></canvas>
+      <canvas id="paintCanvas"></canvas>
+      <canvas id="selectionCanvas" class="selection-canvas"></canvas>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-card hb-glass" id="dropZone">
+        <div class="empty-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+        <h2>Upload your line art</h2>
+        <p>Drag &amp; drop an image here, or click to browse. Works best with black outlines on a white background.</p>
+        <div class="formats">
+          <span class="format-pill">PNG</span>
+          <span class="format-pill">JPG</span>
+          <span class="format-pill">WEBP</span>
+        </div>
+        <button class="hb-btn hb-btn-primary hb-btn-lg" id="emptyUploadBtn" style="margin-top:6px;">
+          <i class="fas fa-folder-open"></i> Choose Image
+        </button>
+      </div>
+    </div>
+
+    <div class="sel-active-pill" id="selActivePill" style="display:none;">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      <span>Selection active</span>
+      <button id="pillDeselectBtn" title="Deselect"><i class="fas fa-xmark"></i></button>
+    </div>
+  </section>
+
+</main>
+
+<!-- =========================================================
+     HELABERRY AI COLORIZER PANEL
+========================================================== -->
+<div class="ai-panel-wrap">
+  <div class="ai-panel">
+    <div class="ai-panel-header">
+      <div class="ai-panel-header-left">
+        <div class="ai-panel-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <path d="M11 8v6M8 11h6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ai-panel-title">Helaberry AI — Object-Aware Colorizer</div>
+          <div class="ai-panel-sub">Detect objects · Segment regions · Apply semantic colors · Render shaded output</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="ai-status-dot busy" id="aiDetectorDot"></div>
+        <span style="font-size:.72rem;color:var(--text-muted);" id="aiDetectorStatus">Loading detector…</span>
+      </div>
+    </div>
+
+    <div class="ai-panel-body">
+      <div class="ai-workspace">
+        <!-- Input stage -->
+        <div class="ai-stage" id="aiInputStage">
+          <div class="ai-dropzone" id="aiDropzone">
+            <div class="ai-dropzone-icon">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <h4>Drop line art for AI coloring</h4>
+            <p>Upload an image or use the one already loaded in the studio. Works best with clear black outlines.</p>
+            <span style="font-size:.68rem;color:var(--text-muted);padding:4px 12px;background:rgba(255,255,255,.04);border-radius:999px;border:1px solid var(--border-color);">PNG · JPG · WEBP</span>
+          </div>
+          <canvas id="aiOriginalCanvas" width="600" height="600"></canvas>
+          <div class="ai-detection-overlay" id="aiDetectionOverlay"></div>
+          <input type="file" id="aiFileInput" accept="image/png,image/jpeg,image/webp,image/bmp" hidden />
+        </div>
+
+        <!-- Output stage -->
+        <div class="ai-stage" id="aiOutputStage">
+          <div class="ai-empty-state" id="aiEmptyResult">
+            <div class="ai-empty-halo">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+              </svg>
+            </div>
+            <h5>Ready to colorize</h5>
+            <p>Load line art and press <strong>Run AI Pipeline</strong>. Objects are detected and colored automatically.</p>
+          </div>
+          <canvas id="aiColorCanvas" width="600" height="600"></canvas>
+          <div class="ai-proc-overlay" id="aiProcOverlay">
+            <div class="ai-loader">
+              <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+            </div>
+            <div class="ai-proc-text" id="aiProcText">Running AI pipeline…</div>
+            <div class="ai-proc-sub" id="aiProcSub">Initializing</div>
+            <div class="ai-progress-track"><div class="ai-progress-fill" id="aiProgressFill"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="ai-controls-bar">
+        <div class="ai-controls-group">
+          <button class="ai-btn ai-btn-primary" id="aiColorizeBtn" disabled>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span>Run AI Pipeline</span>
+          </button>
+          <button class="ai-btn ai-btn-ghost" id="aiResetBtn" disabled>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 3-6.7"/>
+              <polyline points="3 4 3 10 9 10"/>
+            </svg>
+            <span>Reset</span>
+          </button>
+          <button class="ai-btn ai-btn-ghost ai-btn-sm" id="aiToggleDetectionBtn" disabled>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span>Show detections</span>
+          </button>
+        </div>
+
+        <div class="ai-settings">
+          <div class="ai-setting">
+            <div class="ai-setting-head">
+              <label for="aiSaturationRange">Saturation</label>
+              <span class="value" id="aiSaturationVal">1.00</span>
+            </div>
+            <input type="range" id="aiSaturationRange" min="0.3" max="2.0" step="0.05" value="1.0" />
+          </div>
+          <div class="ai-setting">
+            <div class="ai-setting-head">
+              <label for="aiLineRange">Line strength</label>
+              <span class="value" id="aiLineVal">0.85</span>
+            </div>
+            <input type="range" id="aiLineRange" min="0.3" max="1.0" step="0.05" value="0.85" />
+          </div>
+          <div class="ai-setting">
+            <div class="ai-setting-head">
+              <label for="aiConfidenceRange">Detection min</label>
+              <span class="value" id="aiConfidenceVal">0.35</span>
+            </div>
+            <input type="range" id="aiConfidenceRange" min="0.1" max="0.9" step="0.05" value="0.35" />
+          </div>
+          <div class="ai-setting">
+            <div class="ai-setting-head">
+              <label for="aiSemanticRange">Semantic weight</label>
+              <span class="value" id="aiSemanticVal">0.85</span>
+            </div>
+            <input type="range" id="aiSemanticRange" min="0.0" max="1.0" step="0.05" value="0.85" />
+          </div>
+        </div>
+
+        <div class="ai-controls-group">
+          <button class="ai-btn ai-btn-success" id="aiDownloadBtn" disabled>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Download PNG</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="ai-status-bar">
+        <span class="ai-status-dot info" id="aiStatusIndicator"></span>
+        <span id="aiStatusMsg">Initializing object detector…</span>
+      </div>
+
+      <!-- Detection report -->
+      <div class="ai-detection-report" id="aiDetectionReport">
+        <div class="ai-report-header">
+          <div class="ai-report-title">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Detected Objects &amp; Assigned Colors</span>
+          </div>
+          <span class="ai-report-count" id="aiReportCount">0 objects</span>
+        </div>
+        <div class="ai-report-grid" id="aiReportGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden file input (main) -->
+<input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/*" hidden />
+
+<!-- Brush cursor -->
+<div class="brush-cursor" id="brushCursor"></div>
+
+<!-- =========================================================
+     ANALYSIS MODAL
+========================================================== -->
+<div class="modal-overlay" id="analysisModal">
+  <div class="modal" id="analysisModalBox">
+    <div class="modal-head">
+      <div>
+        <h3><i class="fas fa-chart-pie"></i> Color Theory Analysis</h3>
+        <p>Palette harmony &amp; composition report</p>
+      </div>
+      <button class="modal-close" id="analysisClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="analysisBody"></div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/linepro.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Helaberry · Digital Sign Studio</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+
+    <!-- Google Fonts + Font Awesome 6 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- Studio styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/sign.css') }}" />
+</head>
+<body>
+
+    <!-- ========== FIXED NAV ========== -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand" id="brandLink">
+            <i class="fas fa-sign-hanging"></i>
+            Helaberry
+            <span>· Digital Sign Studio</span>
+        </a>
+        <div class="navbar-actions">
+            <a href="{{ url_for('homepage') }}" class="nav-home-btn" id="homeNavButton">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <button id="darkModeToggle" class="nav-dark-toggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN ========== -->
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1><i class="fas fa-sign-hanging" style="color:var(--border-active); margin-right:0.3rem;"></i> Digital Sign Studio</h1>
+                <p>Upload your image, choose a template, and customize with name &amp; year — preview instantly.</p>
+            </div>
+            <span class="header-badge"><i class="fas fa-magic"></i> v2.0 · 4 templates</span>
+        </div>
+
+        <!-- Studio Grid -->
+        <div class="sign-studio">
+
+            <!-- LEFT PANEL -->
+            <div class="left-panel">
+
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" class="file-input" id="fileInput" accept="image/*" />
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Drop your image here</h3>
+                    <p>or click to browse · PNG, JPG, WEBP</p>
+                    <img class="upload-preview" id="uploadPreview" alt="Preview" />
+                    <button class="remove-image-btn" id="removeImageBtn" title="Remove image">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Template Selector -->
+                <div class="template-selector">
+                    <div class="section-label">
+                        <i class="fas fa-layer-group"></i> Choose Template
+                        <span style="font-weight:400;font-size:0.7rem;color:var(--text-muted);margin-left:auto;">click to apply</span>
+                    </div>
+                    <div class="template-grid" id="templateGrid">
+                        <!-- templates injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Text Controls -->
+                <div class="text-controls">
+                    <div class="section-label">
+                        <i class="fas fa-pen-fancy"></i> Customize Text
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Name / Title</label>
+                            <input type="text" id="nameInput" placeholder="e.g. Banda Artz" value="Banda Artz" />
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Year</label>
+                            <input type="text" id="yearInput" placeholder="e.g. 2026" value="2026" />
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label><i class="fas fa-tag"></i> Subtitle (optional)</label>
+                        <input type="text" id="subtitleInput" placeholder="e.g. Creative Director" value="Creative Director" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Preview -->
+            <div class="right-panel">
+                <div class="preview-card">
+                    <div class="section-label">
+                        <span class="label-left">
+                            <i class="fas fa-eye"></i> Live Preview
+                        </span>
+                        <div class="preview-actions">
+                            <button id="refreshPreviewBtn" title="Refresh preview">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="btn-download" id="downloadBtn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="preview-canvas-wrapper">
+                        <canvas id="previewCanvas" width="1600" height="900"></canvas>
+                        <div class="empty-state" id="emptyState">
+                            <i class="fas fa-image"></i>
+                            <p>Upload an image to see your sign</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            ⚡ Helaberry · Digital Sign Studio — designed for professional signage · <a href="#">helaberry.ai</a>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/sign.js') }}"></script>
+</body>
+</html>

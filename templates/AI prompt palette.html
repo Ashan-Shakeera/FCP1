@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Helaberry · AI Color Intelligence</title>
+
+    <!-- ===== FAVICON / LOGO ===== -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+    <meta name="theme-color" content="#121826" />
+    <meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/ai_prompt_palette.css') }}" />
+</head>
+<body>
+
+    <!-- ========== NAV ========== -->
+    <nav class="navbar" id="mainNav">
+        <a href="#" class="navbar-brand" id="brandLink">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry Logo" class="brand-logo" data-fallback="fas fa-leaf" />
+            Helaberry
+            <span class="nav-sub">· AI Studio</span>
+        </a>
+        <div class="navbar-actions">
+            <a href="{{ url_for('homepage') }}" class="nav-home-btn" id="homeNavButton">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <button id="darkModeToggle" class="nav-dark-toggle">
+                <span class="toggle-icon"></span>
+                <span>Light</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== CHATBOT ========== -->
+    <button class="chatbot-toggle" id="chatToggle" aria-label="Open AI Chat">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="AI Chat" class="toggle-logo" data-fallback="fas fa-robot" />
+        <span class="badge-dot"></span>
+    </button>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="brand">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry AI" class="chat-brand-logo" data-fallback="fas fa-brain" />
+                AI Color Assistant
+                <span class="status"><span class="dot"></span> online</span>
+            </div>
+            <button class="close-btn" id="chatClose"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg ai">
+                👋 Hi! I'm your AI color assistant.<br />
+                Ask me about any color, mood, industry, or meaning.<br />
+                <span style="font-size:0.7rem;opacity:0.7;">Powered by 100 colors · 8 dimensions</span>
+                <div class="suggested-chips">
+                    <span class="chip" data-query="Tell me about red">🔴 Red</span>
+                    <span class="chip" data-query="What colors are calming?">😌 Calming</span>
+                    <span class="chip" data-query="Colors for technology">💻 Tech</span>
+                    <span class="chip" data-query="Give me a warm palette">🔥 Warm</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-quick-suggestions" id="quickSuggestions">
+            <button class="qs-btn" data-query="What does blue mean?">💙 Blue</button>
+            <button class="qs-btn" data-query="Find colors for luxury">✨ Luxury</button>
+            <button class="qs-btn" data-query="What colors are neutral?">⚪ Neutral</button>
+            <button class="qs-btn" data-query="Tell me about green">🌿 Green</button>
+            <button class="qs-btn" data-query="Colors for healthcare">🏥 Healthcare</button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Ask about any color…" autocomplete="off" />
+            <button class="send-btn" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- ========== MAIN ========== -->
+    <div class="container">
+
+        <div class="tagline-bar">
+            <i class="fas fa-robot"></i>
+            AI Color Intelligence
+            <span class="ai-badge"><i class="fas fa-microchip"></i> 100 colors · 8 dimensions</span>
+            <span style="margin-left:auto;font-size:0.75rem;opacity:0.6;">Click any color → full AI analysis</span>
+        </div>
+
+        <!-- TOP ROW -->
+        <div class="dashboard">
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-comment-dots"></i> Prompt Palette <span class="ai-chip">AI</span></div>
+                <div class="prompt-group">
+                    <input type="text" id="promptInput" class="prompt-input" placeholder="e.g., 'midnight aurora', 'terracotta sunset'" />
+                    <button id="generatePaletteBtn" class="btn-generate"><i class="fas fa-magic"></i> Generate</button>
+                </div>
+                <div id="paletteContainer" class="palette-grid"></div>
+                <div style="margin-top:0.6rem;font-size:0.7rem;color:var(--text-secondary);">
+                    <i class="fas fa-mouse-pointer"></i> Click swatch → AI analysis
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-fill-drip"></i> Color Core <span class="ai-chip">AI</span></div>
+                <div class="wheel-area">
+                    <canvas id="colorWheelCanvas" width="300" height="300"></canvas>
+                    <div class="color-box">
+                        <div class="color-preview" id="activeColorPreview" style="background:#3b82f6;"></div>
+                        <div class="color-details">
+                            <p id="activeHexValue">#3B82F6</p>
+                            <input type="color" id="colorPickerInput" value="#3b82f6" class="color-input" />
+                            <div id="textColorPreview" class="text-color-preview">
+                                <i class="fas fa-font"></i> Text:
+                                <span id="suggestedTextColor" style="font-weight:bold;">#FFFFFF</span>
+                                <span id="sampleTextBadge" class="sample-text" style="background:#3b82f6;color:white;">Aa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="aiIntelligencePanel" class="ai-panel">
+                    <div class="ai-header"><i class="fas fa-brain"></i> AI Color Intelligence</div>
+                    <div id="aiContent" class="ai-content">
+                        <div style="text-align:center;padding:0.4rem 0;color:var(--text-secondary);font-size:0.8rem;">
+                            <i class="fas fa-hand-pointer" style="margin-right:0.4rem;"></i> Select a color to analyze
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:0.8rem;">
+                    <div style="font-weight:500;margin-bottom:0.6rem;color:var(--text-primary);font-size:0.85rem;">
+                        <i class="fas fa-chart-line"></i> AI Harmony Matches
+                    </div>
+                    <div id="matchingGrid" class="match-grid"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-simple"></i> Gradient Studio</div>
+                <div class="gradient-controls">
+                    <div class="dual-pickers">
+                        <div class="grad-picker"><label>Start Color</label><input type="color" id="gradColorA" value="#3b82f6" /></div>
+                        <div class="grad-picker"><label>End Color</label><input type="color" id="gradColorB" value="#f97316" /></div>
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem;color:var(--text-secondary);">Direction</label>
+                        <div class="grad-dir" id="directionGroup">
+                            <button data-dir="to right" class="dir-btn active">→ Right</button>
+                            <button data-dir="to bottom" class="dir-btn">↓ Bottom</button>
+                            <button data-dir="135deg" class="dir-btn">↘ Diagonal</button>
+                            <button data-dir="to left" class="dir-btn">← Left</button>
+                        </div>
+                    </div>
+                    <div class="gradient-preview" id="gradientPreview"></div>
+                    <div class="css-code" id="cssGradientCode">
+                        <code>background: linear-gradient(to right, #3b82f6, #f97316);</code>
+                        <button id="copyGradientBtn" class="copy-btn"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+                        <button id="saveGradientBtn" class="small-btn"><i class="fas fa-save"></i> Save</button>
+                        <button id="clearGradientBtn" class="small-btn"><i class="fas fa-trash-alt"></i> Reset</button>
+                        <button id="useActiveGradientBtn" class="small-btn"><i class="fas fa-sync-alt"></i> Use Active</button>
+                    </div>
+                    <div id="savedGradientsList" class="saved-list">
+                        <div style="font-size:0.7rem;font-weight:500;color:var(--text-secondary);">📁 Saved Gradients</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW -->
+        <div class="bottom-row">
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-palette"></i> Custom Builder <span class="ai-chip">AI</span></div>
+
+                <div class="ai-search-area">
+                    <input type="text" id="aiSearchInput" class="ai-search-input" placeholder="Search by name, hex, meaning, industry, mood…" />
+                    <select id="aiSearchFilter" class="ai-search-select">
+                        <option value="all">All Categories</option>
+                        <option value="Warm">Warm</option>
+                        <option value="Cool">Cool</option>
+                        <option value="Neutral">Neutral</option>
+                    </select>
+                    <button id="aiSearchBtn" class="btn-generate" style="padding:0 1.2rem;font-size:0.85rem;"><i class="fas fa-search"></i></button>
+                </div>
+                <div id="aiSearchResults" class="ai-search-results"></div>
+
+                <hr style="margin:0.8rem 0;" />
+
+                <div class="builder-controls">
+                    <div>
+                        <label>Pick a color</label>
+                        <input type="color" id="customColorPicker" value="#3b82f6" />
+                    </div>
+                    <button id="addColorBtn" class="btn-generate small"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <div id="customPaletteContainer" class="custom-palette-grid" style="min-height:100px;"></div>
+                <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1rem;">
+                    <button id="saveCustomPaletteBtn" class="small-btn"><i class="fas fa-save"></i> Save</button>
+                    <button id="copyCustomPaletteBtn" class="small-btn"><i class="far fa-copy"></i> Copy Hex</button>
+                    <button id="clearCustomPaletteBtn" class="small-btn"><i class="fas fa-broom"></i> Clear</button>
+                </div>
+                <div style="margin-top:1rem;">
+                    <label style="font-size:0.75rem;color:var(--text-secondary);">📚 Saved Palettes</label>
+                    <select id="savedPalettesSelect" class="prompt-input" style="margin-top:0.3rem;"></select>
+                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                        <button id="loadPaletteBtn" class="small-btn">Load</button>
+                        <button id="deletePaletteBtn" class="small-btn" style="background:#fee2e2;color:#b91c1c;">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="display:flex;flex-direction:column;justify-content:center;min-height:200px;background:var(--card-bg);">
+                <div style="text-align:center;color:var(--text-secondary);">
+                    <i class="fas fa-brain" style="font-size:2.4rem;color:#a78bfa;margin-bottom:0.6rem;display:block;"></i>
+                    <p style="font-weight:600;color:var(--text-primary);font-size:1.1rem;">AI Color Intelligence</p>
+                    <p style="font-size:0.85rem;max-width:280px;margin:0.4rem auto 0;color:var(--text-secondary);">
+                        Powered by 100 colors · 8 dimensions of analysis including psychology, culture, and industry usage.
+                    </p>
+                    <div style="display:flex;gap:0.8rem;justify-content:center;margin-top:1rem;flex-wrap:wrap;">
+                        <span style="background:var(--chip-bg);padding:0.2rem 0.8rem;border-radius:20px;font-size:0.7rem;color:var(--btn-primary);"><i class="fas fa-smile"></i> Psychology</span>
+                        <span style="background:var(--chip-bg);padding:0.2rem 0.8rem;border-radius:20px;font-size:0.7rem;color:var(--btn-primary);"><i class="fas fa-globe"></i> Culture</span>
+                        <span style="background:var(--chip-bg);padding:0.2rem 0.8rem;border-radius:20px;font-size:0.7rem;color:var(--btn-primary);"><i class="fas fa-industry"></i> Industry</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            ⚡ Helaberry · AI Color Intelligence — 100 colors · psychology · culture · harmony
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/ai_prompt_palette.js') }}"></script>
+</body>
+</html>

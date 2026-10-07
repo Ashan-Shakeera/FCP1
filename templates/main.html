@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+<title>Helaberry · Creative Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/static/styles/main.css" />
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- ============ SIDEBAR ============ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand" onclick="window.App.navigate('dashboard')">
+    <div class="brand-icon">H</div>
+    <div>
+      <div class="brand-name">Helaberry</div>
+      <div class="brand-sub">creative platform</div>
+    </div>
+  </div>
+
+  <div class="user-card" id="userCard">
+    <div class="user-card-top">
+      <div class="user-avatar" id="userAvatarSidebar">H</div>
+      <div class="user-meta">
+        <div class="user-name-big" id="userNameSidebar">Loading…</div>
+        <div class="user-role-big" id="userRoleSidebar"><i class="fas fa-user"></i> <span>—</span></div>
+      </div>
+    </div>
+    <div class="user-status" id="userStatusChip">
+      <span class="status-dot"></span> <span id="userStatusText">Online</span>
+    </div>
+  </div>
+
+  <nav id="sidebarNav"></nav>
+
+  <div class="sidebar-footer">
+    <i class="fas fa-copyright"></i> 2025 · HelaBerry
+    <span style="margin-left:auto;font-size:.72rem;">🍓</span>
+  </div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main class="main" id="mainContent">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+      <div class="page-heading">
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="page-sub" id="pageSub">Your creative overview</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search people, posts, art…" id="globalSearch" autocomplete="off">
+      </div>
+      <button class="icon-btn" id="notifBtn" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notif-dot" id="notifDot" style="display:none;"></span>
+      </button>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme"><i class="fas fa-moon"></i></button>
+      <div class="header-user" id="headerUser" title="Account">
+        <div class="header-avatar" id="headerAvatar">U</div>
+        <div class="header-user-text">
+          <div class="header-user-name" id="headerUserName">Guest</div>
+          <div class="header-user-role" id="headerUserRole">Not signed in</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pageContainer"></div>
+</main>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="story-viewer" id="storyViewer"></div>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>

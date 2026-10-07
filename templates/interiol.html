@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+<meta name="color-scheme" content="dark" />
+<title>Interior Studio Pro · Helaberry</title>
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/interiol.css') }}" />
+</head>
+<body class="splash-active">
+
+<!-- ============================================================
+     SPLASH SCREEN — logo.png
+     Timing is controlled in JS: SPLASH_HOLD_MS (550) + SPLASH_FADE_MS (450)
+     ============================================================ -->
+<div class="splash" id="splash">
+  <div class="splash-glow"></div>
+  <div class="splash-inner">
+    <div class="splash-logo">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry logo" id="splashLogo" />
+      <span class="splash-fallback" id="splashFallback">H</span>
+    </div>
+    <div class="splash-brand">Helaberry</div>
+    <div class="splash-sub">Interior Studio Pro</div>
+    <div class="splash-bar"><span id="splashBar"></span></div>
+  </div>
+</div>
+
+<nav class="navbar">
+  <a class="nav-brand" href="{{ url_for('homepage') }}" title="Back to homepage">
+    <span class="brand-icon">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry logo" id="navLogo" />
+      <span class="brand-fallback" id="navLogoFallback">H</span>
+    </span>
+    <span class="brand-name">Helaberry</span>
+  </a>
+  <div class="nav-center">
+    <div class="nav-step active"><span class="num">1</span> Room</div>
+    <div class="nav-step"><span class="num">2</span> Patterns</div>
+    <div class="nav-step"><span class="num">3</span> Export</div>
+  </div>
+  <div class="nav-actions">
+    <a class="nav-btn nav-btn-outline" href="{{ url_for('homepage') }}" id="navHome" title="Go to homepage">
+      <i class="fas fa-house"></i><span class="label">Home</span>
+    </a>
+    <button class="nav-btn nav-btn-outline" id="navReset"><i class="fas fa-rotate-left"></i><span class="label">Reset</span></button>
+    <button class="nav-btn nav-btn-primary" id="navSave"><i class="fas fa-download"></i><span class="label">Export</span></button>
+  </div>
+</nav>
+
+<div class="bg-canvas">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div>
+  <div class="orb orb-3"></div><div class="orb orb-4"></div>
+</div>
+<div class="bg-grid"></div>
+
+<main class="page">
+  <header class="page-head">
+    <span class="eyebrow"><i class="fas fa-wand-magic-sparkles"></i> Interior design studio pro</span>
+    <h1 class="page-title">All 16 curtain styles · <span class="highlight">your own fabric</span></h1>
+    <p class="page-desc">
+      From Empire swags to Japanese blinds — every style is here. Upload your own fabric and we mock it perfectly on your room photo.
+    </p>
+  </header>
+
+  <section class="upload-zone" id="uploadZone" tabindex="0" role="button">
+    <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+    <h2>Drop your room photo here</h2>
+    <p>or click to browse &nbsp;·&nbsp; paste with <strong>Ctrl&nbsp;+&nbsp;V</strong></p>
+    <div class="upload-hint">
+      <span>JPG</span><span>PNG</span><span>WEBP</span><span>Up to 15 MB</span><span>On-device</span>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" />
+  </section>
+
+  <section class="studio is-hidden" id="studio">
+    <div class="studio-bar">
+      <div class="studio-bar-left">
+        <div class="studio-status"><span class="live-dot"></span> Room loaded</div>
+        <div class="studio-stat"><strong id="activeCount">0</strong> layers active</div>
+        <div class="studio-stat"><strong id="customCount">0</strong> custom patterns</div>
+      </div>
+      <div class="studio-bar-right">
+        <a class="bar-btn home" href="{{ url_for('homepage') }}" title="Back to homepage"><i class="fas fa-house"></i> Home</a>
+        <button class="bar-btn" id="barCompare"><i class="fas fa-code-compare"></i> Compare</button>
+        <button class="bar-btn" id="barClear"><i class="fas fa-broom"></i> Clear layers</button>
+        <button class="bar-btn" id="barNew"><i class="fas fa-camera"></i> New room</button>
+        <button class="bar-btn primary" id="barExport"><i class="fas fa-download"></i> Export PNG</button>
+      </div>
+    </div>
+
+    <div class="studio-grid">
+      <aside class="preview-panel">
+        <div class="preview-card">
+          <div class="preview-canvas" id="previewCanvas">
+            <img class="room" id="previewImg" alt="Room preview" />
+            <div class="layer layer-wallpaint" id="layerWallPaint"></div>
+            <div class="layer layer-wallpaper" id="layerWallpaper"></div>
+            <div class="layer layer-walltiles" id="layerWallTiles"></div>
+            <div class="layer layer-floor" id="layerFloor">
+              <div class="floor-pattern" id="floorPattern"></div>
+            </div>
+            <div class="curtain curtain-left" id="curtainL" data-style="straight"></div>
+            <div class="curtain curtain-right" id="curtainR" data-style="straight"></div>
+          </div>
+          <div class="preview-tools">
+            <button class="tool-btn" id="btnCompare"><i class="fas fa-code-compare"></i> Compare</button>
+            <button class="tool-btn" id="btnCurtainToggle"><i class="fas fa-eye"></i> Curtains</button>
+            <span class="spacer"></span>
+            <button class="tool-btn" id="btnRandom"><i class="fas fa-dice"></i> Surprise me</button>
+          </div>
+        </div>
+
+        <div class="palette-mini">
+          <div class="palette-mini-head">
+            <h3><i class="fas fa-swatchbook"></i> Room palette</h3>
+            <span>Click to copy</span>
+          </div>
+          <div class="palette-strip" id="paletteStrip"></div>
+          <div class="swatch-list" id="swatchList"></div>
+        </div>
+      </aside>
+
+      <section class="controls-panel">
+        <!-- CURTAINS -->
+        <div class="layer-card" data-layer="curtains">
+          <div class="layer-head">
+            <div class="layer-icon"><i class="fas fa-scroll"></i><span class="custom-dot"></span></div>
+            <div class="layer-meta">
+              <div class="layer-title">Curtains <span class="badge-on">Active</span><span class="badge-custom">Custom</span></div>
+              <div class="layer-sub">16 classic styles — pick one, then upload your own fabric.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" data-toggle="curtains" checked>
+              <span class="track"></span><span class="thumb"></span>
+            </label>
+          </div>
+          <div class="layer-body">
+            <div class="source-tabs" data-sources="curtains">
+              <button class="source-tab active" data-source="preset"><i class="fas fa-swatchbook"></i> Styles</button>
+              <button class="source-tab" data-source="upload"><i class="fas fa-cloud-arrow-up"></i> Upload fabric</button>
+            </div>
+
+            <div class="source-view" data-view="preset">
+              <div class="cp-section">
+                <div class="cp-label"><span>Curtain style</span><span class="hint" id="curtainStyleName">Straight</span></div>
+                <div class="pattern-grid curtain-grid" id="curtainStyleGrid"></div>
+              </div>
+              <div class="cp-section">
+                <div class="cp-label"><span>Fabric color</span></div>
+                <div class="swatch-row" id="curtainSwatches"></div>
+              </div>
+            </div>
+
+            <div class="source-view is-hidden" data-view="upload">
+              <div class="upload-pattern-zone" data-upload="curtains">
+                <div class="upz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                <h4>Upload curtain fabric</h4>
+                <p>Drop a photo of your fabric. We'll analyze the weave and tile it seamlessly onto any style.</p>
+                <div class="upz-hints"><span>JPG</span><span>PNG</span><span>Close-up works best</span></div>
+                <input type="file" accept="image/*" data-file="curtains">
+              </div>
+              <div class="pattern-preview is-hidden" data-preview="curtains">
+                <div class="pp-head">
+                  <div class="pp-thumb" data-thumb="curtains"></div>
+                  <div class="pp-info">
+                    <div class="pp-name" data-name="curtains">Custom fabric</div>
+                    <div class="pp-meta" data-meta="curtains"></div>
+                    <div class="pp-actions">
+                      <button class="mini-btn primary" data-apply="curtains"><i class="fas fa-check"></i> Apply</button>
+                      <button class="mini-btn" data-replace="curtains"><i class="fas fa-rotate"></i> Replace</button>
+                      <button class="mini-btn" data-remove="curtains"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="analysis-section">
+                  <div class="analysis-title"><i class="fas fa-microscope"></i> Analysis</div>
+                  <div class="analysis-badges" data-analysis="curtains"></div>
+                  <div class="analysis-colors" data-colors="curtains"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cp-section">
+              <div class="cp-label"><span>Dimensions</span></div>
+              <div class="slider-row">
+                <label for="curtainWidth">Width</label>
+                <input type="range" id="curtainWidth" min="10" max="30" step="1" value="18">
+                <span class="v" id="curtainWidthVal">18%</span>
+              </div>
+              <div class="slider-row">
+                <label for="curtainOpacity">Opacity</label>
+                <input type="range" id="curtainOpacity" min="0.2" max="1" step="0.02" value="1">
+                <span class="v" id="curtainOpacityVal">1.00</span>
+              </div>
+              <div class="slider-row">
+                <label for="curtainScale">Pattern scale</label>
+                <input type="range" id="curtainScale" min="0.4" max="3" step="0.05" value="1">
+                <span class="v" id="curtainScaleVal">1.00×</span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button class="mini-btn primary" id="curtainToggleBtn"><i class="fas fa-eye"></i> Toggle</button>
+              <button class="mini-btn" id="curtainAutoFit"><i class="fas fa-wand-magic-sparkles"></i> Auto-fit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WALL PAINT -->
+        <div class="layer-card" data-layer="wallpaint">
+          <div class="layer-head">
+            <div class="layer-icon"><i class="fas fa-fill-drip"></i></div>
+            <div class="layer-meta">
+              <div class="layer-title">Wall paint <span class="badge-on">Active</span></div>
+              <div class="layer-sub">Recolors walls while keeping shadows and highlights.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" data-toggle="wallpaint">
+              <span class="track"></span><span class="thumb"></span>
+            </label>
+          </div>
+          <div class="layer-body">
+            <div class="cp-section">
+              <div class="cp-label"><span>Paint color</span></div>
+              <div class="swatch-row" id="paintSwatches"></div>
+            </div>
+            <div class="cp-section">
+              <div class="cp-label"><span>Intensity</span></div>
+              <div class="slider-row">
+                <label for="paintOpacity">Coverage</label>
+                <input type="range" id="paintOpacity" min="0.15" max="1" step="0.02" value="0.7">
+                <span class="v" id="paintOpacityVal">0.70</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="mini-btn primary" id="paintThemeBtn"><i class="fas fa-palette"></i> Theme wall</button>
+              <button class="mini-btn" id="paintClearBtn"><i class="fas fa-broom"></i> Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WALL TILES -->
+        <div class="layer-card" data-layer="walltiles">
+          <div class="layer-head">
+            <div class="layer-icon"><i class="fas fa-th-large"></i><span class="custom-dot"></span></div>
+            <div class="layer-meta">
+              <div class="layer-title">Wall tiles <span class="badge-on">Active</span><span class="badge-custom">Custom</span></div>
+              <div class="layer-sub">Apply a tile pattern to the upper wall.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" data-toggle="walltiles">
+              <span class="track"></span><span class="thumb"></span>
+            </label>
+          </div>
+          <div class="layer-body">
+            <div class="source-tabs" data-sources="walltiles">
+              <button class="source-tab active" data-source="preset"><i class="fas fa-swatchbook"></i> Presets</button>
+              <button class="source-tab" data-source="upload"><i class="fas fa-cloud-arrow-up"></i> Upload tile</button>
+            </div>
+            <div class="source-view" data-view="preset">
+              <div class="cp-section">
+                <div class="cp-label"><span>Tile pattern</span></div>
+                <div class="pattern-grid" id="tilePatternGrid"></div>
+              </div>
+              <div class="cp-section">
+                <div class="cp-label"><span>Tile color</span></div>
+                <div class="swatch-row" id="tileSwatches"></div>
+              </div>
+            </div>
+            <div class="source-view is-hidden" data-view="upload">
+              <div class="upload-pattern-zone" data-upload="walltiles">
+                <div class="upz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                <h4>Upload tile image</h4>
+                <p>Upload a tile photo. We detect the grid and tile it seamlessly.</p>
+                <div class="upz-hints"><span>Square</span><span>Subway</span><span>Mosaic</span></div>
+                <input type="file" accept="image/*" data-file="walltiles">
+              </div>
+              <div class="pattern-preview is-hidden" data-preview="walltiles">
+                <div class="pp-head">
+                  <div class="pp-thumb" data-thumb="walltiles"></div>
+                  <div class="pp-info">
+                    <div class="pp-name" data-name="walltiles">Custom tile</div>
+                    <div class="pp-meta" data-meta="walltiles"></div>
+                    <div class="pp-actions">
+                      <button class="mini-btn primary" data-apply="walltiles"><i class="fas fa-check"></i> Apply</button>
+                      <button class="mini-btn" data-replace="walltiles"><i class="fas fa-rotate"></i> Replace</button>
+                      <button class="mini-btn" data-remove="walltiles"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="analysis-section">
+                  <div class="analysis-title"><i class="fas fa-microscope"></i> Analysis</div>
+                  <div class="analysis-badges" data-analysis="walltiles"></div>
+                  <div class="analysis-colors" data-colors="walltiles"></div>
+                </div>
+              </div>
+            </div>
+            <div class="cp-section">
+              <div class="cp-label"><span>Options</span></div>
+              <div class="slider-row">
+                <label for="tileScale">Tile size</label>
+                <input type="range" id="tileScale" min="0.4" max="3" step="0.05" value="1">
+                <span class="v" id="tileScaleVal">1.00×</span>
+              </div>
+              <div class="slider-row">
+                <label for="tileOpacity">Intensity</label>
+                <input type="range" id="tileOpacity" min="0.2" max="1" step="0.02" value="0.88">
+                <span class="v" id="tileOpacityVal">0.88</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="mini-btn primary" id="tileThemeBtn"><i class="fas fa-palette"></i> Theme tile</button>
+              <button class="mini-btn" id="tileClearBtn"><i class="fas fa-broom"></i> Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLOOR -->
+        <div class="layer-card" data-layer="floor">
+          <div class="layer-head">
+            <div class="layer-icon"><i class="fas fa-border-all"></i><span class="custom-dot"></span></div>
+            <div class="layer-meta">
+              <div class="layer-title">Flooring <span class="badge-on">Active</span><span class="badge-custom">Custom</span></div>
+              <div class="layer-sub">Perspective-mapped floor — preset or upload your own.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" data-toggle="floor">
+              <span class="track"></span><span class="thumb"></span>
+            </label>
+          </div>
+          <div class="layer-body">
+            <div class="source-tabs" data-sources="floor">
+              <button class="source-tab active" data-source="preset"><i class="fas fa-swatchbook"></i> Presets</button>
+              <button class="source-tab" data-source="upload"><i class="fas fa-cloud-arrow-up"></i> Upload floor</button>
+            </div>
+            <div class="source-view" data-view="preset">
+              <div class="cp-section">
+                <div class="cp-label"><span>Floor pattern</span></div>
+                <div class="pattern-grid" id="floorPatternGrid"></div>
+              </div>
+              <div class="cp-section">
+                <div class="cp-label"><span>Floor color</span></div>
+                <div class="swatch-row" id="floorSwatches"></div>
+              </div>
+            </div>
+            <div class="source-view is-hidden" data-view="upload">
+              <div class="upload-pattern-zone" data-upload="floor">
+                <div class="upz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                <h4>Upload floor image</h4>
+                <p>Wood, marble, or tile — applied with perspective.</p>
+                <div class="upz-hints"><span>Wood</span><span>Marble</span><span>Tile</span></div>
+                <input type="file" accept="image/*" data-file="floor">
+              </div>
+              <div class="pattern-preview is-hidden" data-preview="floor">
+                <div class="pp-head">
+                  <div class="pp-thumb" data-thumb="floor"></div>
+                  <div class="pp-info">
+                    <div class="pp-name" data-name="floor">Custom floor</div>
+                    <div class="pp-meta" data-meta="floor"></div>
+                    <div class="pp-actions">
+                      <button class="mini-btn primary" data-apply="floor"><i class="fas fa-check"></i> Apply</button>
+                      <button class="mini-btn" data-replace="floor"><i class="fas fa-rotate"></i> Replace</button>
+                      <button class="mini-btn" data-remove="floor"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="analysis-section">
+                  <div class="analysis-title"><i class="fas fa-microscope"></i> Analysis</div>
+                  <div class="analysis-badges" data-analysis="floor"></div>
+                  <div class="analysis-colors" data-colors="floor"></div>
+                </div>
+              </div>
+            </div>
+            <div class="cp-section">
+              <div class="cp-label"><span>Options</span></div>
+              <div class="slider-row">
+                <label for="floorScale">Pattern size</label>
+                <input type="range" id="floorScale" min="0.4" max="3" step="0.05" value="1">
+                <span class="v" id="floorScaleVal">1.00×</span>
+              </div>
+              <div class="slider-row">
+                <label for="floorOpacity">Intensity</label>
+                <input type="range" id="floorOpacity" min="0.2" max="1" step="0.02" value="0.9">
+                <span class="v" id="floorOpacityVal">0.90</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="mini-btn primary" id="floorThemeBtn"><i class="fas fa-palette"></i> Theme floor</button>
+              <button class="mini-btn" id="floorClearBtn"><i class="fas fa-broom"></i> Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- WALLPAPER -->
+        <div class="layer-card" data-layer="wallpaper">
+          <div class="layer-head">
+            <div class="layer-icon"><i class="fas fa-scroll"></i><span class="custom-dot"></span></div>
+            <div class="layer-meta">
+              <div class="layer-title">Wallpaper <span class="badge-on">Active</span><span class="badge-custom">Custom</span></div>
+              <div class="layer-sub">Decorative pattern on walls — preset or upload your own.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" data-toggle="wallpaper">
+              <span class="track"></span><span class="thumb"></span>
+            </label>
+          </div>
+          <div class="layer-body">
+            <div class="source-tabs" data-sources="wallpaper">
+              <button class="source-tab active" data-source="preset"><i class="fas fa-swatchbook"></i> Presets</button>
+              <button class="source-tab" data-source="upload"><i class="fas fa-cloud-arrow-up"></i> Upload paper</button>
+            </div>
+            <div class="source-view" data-view="preset">
+              <div class="cp-section">
+                <div class="cp-label"><span>Wallpaper pattern</span></div>
+                <div class="pattern-grid" id="paperPatternGrid"></div>
+              </div>
+              <div class="cp-section">
+                <div class="cp-label"><span>Paper color</span></div>
+                <div class="swatch-row" id="paperSwatches"></div>
+              </div>
+            </div>
+            <div class="source-view is-hidden" data-view="upload">
+              <div class="upload-pattern-zone" data-upload="wallpaper">
+                <div class="upz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                <h4>Upload wallpaper image</h4>
+                <p>Floral, geometric, or textured — tiled seamlessly.</p>
+                <div class="upz-hints"><span>Floral</span><span>Geometric</span><span>Texture</span></div>
+                <input type="file" accept="image/*" data-file="wallpaper">
+              </div>
+              <div class="pattern-preview is-hidden" data-preview="wallpaper">
+                <div class="pp-head">
+                  <div class="pp-thumb" data-thumb="wallpaper"></div>
+                  <div class="pp-info">
+                    <div class="pp-name" data-name="wallpaper">Custom wallpaper</div>
+                    <div class="pp-meta" data-meta="wallpaper"></div>
+                    <div class="pp-actions">
+                      <button class="mini-btn primary" data-apply="wallpaper"><i class="fas fa-check"></i> Apply</button>
+                      <button class="mini-btn" data-replace="wallpaper"><i class="fas fa-rotate"></i> Replace</button>
+                      <button class="mini-btn" data-remove="wallpaper"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="analysis-section">
+                  <div class="analysis-title"><i class="fas fa-microscope"></i> Analysis</div>
+                  <div class="analysis-badges" data-analysis="wallpaper"></div>
+                  <div class="analysis-colors" data-colors="wallpaper"></div>
+                </div>
+              </div>
+            </div>
+            <div class="cp-section">
+              <div class="cp-label"><span>Intensity</span></div>
+              <div class="slider-row">
+                <label for="paperOpacity">Coverage</label>
+                <input type="range" id="paperOpacity" min="0.2" max="1" step="0.02" value="0.75">
+                <span class="v" id="paperOpacityVal">0.75</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="mini-btn primary" id="paperThemeBtn"><i class="fas fa-palette"></i> Theme paper</button>
+              <button class="mini-btn" id="paperClearBtn"><i class="fas fa-broom"></i> Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMART SUGGESTIONS -->
+        <div class="info-card" id="smartSuggestionsCard" style="display:none;">
+          <div class="info-head">
+            <div>
+              <div class="info-title"><i class="fas fa-lightbulb"></i> Smart suggestions</div>
+              <div class="info-sub">Based on your uploaded patterns and room palette.</div>
+            </div>
+          </div>
+          <div class="suggestion-list" id="suggestionList"></div>
+        </div>
+
+        <!-- THEMES -->
+        <div class="info-card">
+          <div class="info-head">
+            <div>
+              <div class="info-title"><i class="fas fa-palette"></i> Suggested color themes</div>
+              <div class="info-sub">Complete schemes from your room's dominant tone.</div>
+            </div>
+          </div>
+          <div class="theme-tabs" id="themeTabs"></div>
+          <p class="theme-desc" id="themeDesc"></p>
+          <div class="theme-grid" id="themeGrid"></div>
+          <div class="theme-actions">
+            <button class="mini-btn primary" id="themeCurtain"><i class="fas fa-scroll"></i> Curtains</button>
+            <button class="mini-btn" id="themePaint"><i class="fas fa-fill-drip"></i> Walls</button>
+            <button class="mini-btn" id="themeFloor"><i class="fas fa-border-all"></i> Floor</button>
+            <button class="mini-btn" id="themeTiles"><i class="fas fa-th-large"></i> Tiles</button>
+          </div>
+        </div>
+
+        <!-- CURTAIN SUGGESTIONS -->
+        <div class="info-card">
+          <div class="info-head">
+            <div>
+              <div class="info-title"><i class="fas fa-scroll"></i> Curtain color suggestions</div>
+              <div class="info-sub">Curated colors from your room's palette.</div>
+            </div>
+          </div>
+          <div class="curtain-list" id="curtainSuggestions"></div>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<div class="loader" id="loader">
+  <div class="loader-ring"></div>
+  <p id="loaderMsg">Reading colors…</p>
+</div>
+
+<script src="{{ url_for('static', filename='js/interiol.js') }}"></script>
+</body>
+</html>

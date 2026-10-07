@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="theme-color" content="#3b82f6" id="theme-color-meta" />
+    <title>Helaberry · Chroma Compass — Color Meanings & Wheel</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+
+    <!-- Google Fonts + Font Awesome 6 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/discover_color_meanings.css') }}" />
+</head>
+<body>
+
+    <!-- ========== FIXED NAV ========== -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand" id="brandLink">
+            <!-- LOGO IMAGE (falls back to icon if logo.png is missing) -->
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry Logo" class="brand-logo" id="brandLogo"
+                 onerror="this.style.display='none'; var f=document.getElementById('brandFallbackIcon'); if(f){f.style.display='inline-block';}" />
+            <i class="fas fa-sign-hanging" id="brandFallbackIcon" style="display:none;"></i>
+            Helaberry
+            <span>· HelaBerry Compass</span>
+        </a>
+        <div class="navbar-actions">
+            <a href="{{ url_for('homepage') }}" class="nav-home-btn" id="homeNavButton">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <button id="darkModeToggle" class="nav-dark-toggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN ========== -->
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1><i class="fas fa-palette" style="color:var(--border-active); margin-right:0.3rem;"></i> HelaBerry Compass</h1>
+                <p>Discover color meanings by emotion, or spin the wheel — every hue tells a story.</p>
+            </div>
+            <span class="header-badge"><i class="fas fa-magic"></i> v2.0 · 28 colors</span>
+        </div>
+
+        <!-- Wheel Panel -->
+        <div class="wheel-panel">
+            <div class="wheel-area">
+                <canvas id="colorWheelCanvas" width="300" height="300" class="wheel-canvas"></canvas>
+                <div class="wheel-hint"><i class="fas fa-hand-pointer"></i> Click anywhere on the wheel → reveal color &amp; meaning</div>
+            </div>
+            <div class="color-box" id="liveColorBox">
+                <div id="selectedSwatch" class="selected-swatch" style="background: #d9c8b2;"></div>
+                <div id="selectedColorName" class="selected-color-name">—</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); letter-spacing:0.3px; text-transform:uppercase;">meanings &amp; symbolism</div>
+                <div id="selectedMeaningsContainer" class="meaning-badge-cluster">
+                    <span class="pill">select a color</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <input type="text" id="meaningSearchInput" class="search-input" placeholder="e.g., love, sadness, royalty, jealousy, calm, passion" />
+            <button id="searchBtn" class="btn btn-primary"><i class="fas fa-search"></i> Find colors</button>
+            <button id="resetBtn" class="btn btn-reset"><i class="fas fa-undo-alt"></i> Show all</button>
+        </div>
+
+        <!-- Chips -->
+        <div class="chips">
+            <span class="chip" data-meaning="love"><i class="fas fa-heart" style="color:#ef4444;"></i> love</span>
+            <span class="chip" data-meaning="sadness"><i class="fas fa-tear" style="color:#60a5fa;"></i> sadness</span>
+            <span class="chip" data-meaning="trust"><i class="fas fa-handshake" style="color:#3b82f6;"></i> trust</span>
+            <span class="chip" data-meaning="energy"><i class="fas fa-bolt" style="color:#f59e0b;"></i> energy</span>
+            <span class="chip" data-meaning="calm"><i class="fas fa-water" style="color:#06b6d4;"></i> calm</span>
+            <span class="chip" data-meaning="luxury"><i class="fas fa-crown" style="color:#8b5cf6;"></i> luxury</span>
+            <span class="chip" data-meaning="nature"><i class="fas fa-leaf" style="color:#22c55e;"></i> nature</span>
+            <span class="chip" data-meaning="creativity"><i class="fas fa-paint-brush" style="color:#ec4899;"></i> creativity</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats" id="statsArea">
+            <i class="fas fa-palette" style="color:var(--border-active);"></i>
+            <span id="resultCount">0</span> colors displayed
+        </div>
+
+        <!-- Color Grid -->
+        <div id="colorGridContainer" class="color-grid">
+            <!-- injected by JS -->
+        </div>
+
+        <footer>
+            ⚡ Helaberry · Chroma Compass — color meanings &amp; wheel · <a href="#">helaberry.ai</a>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/discover_color_meanings.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hela Color Platte — Color Palettes for Designers and Artists</title>
+
+<!-- ===== FAVICON (uses your logo) ===== -->
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/helaplatte.css') }}">
+</head>
+<body>
+
+<!-- ===================== SPLASH SCREEN ===================== -->
+<div class="splash" id="splash" role="status" aria-label="Loading Hela Color Platte">
+  <div class="splash-glow" aria-hidden="true"></div>
+
+  <img class="splash-logo" id="splashLogo" src="{{ url_for('static', filename='img/logo.png') }}" alt="Hela Color Platte logo">
+
+  <!-- shown automatically only if logo.png cannot be loaded -->
+  <span class="logo-bars splash-fallback" id="splashFallback" hidden>
+    <i></i><i></i><i></i><i></i>
+  </span>
+
+  <h1 class="splash-title">Hela Color Platte</h1>
+  <div class="splash-bar" aria-hidden="true"><i></i></div>
+</div>
+
+<noscript><style>.splash { display: none !important; }</style></noscript>
+
+<!-- ===================== ANIMATED BACKGROUND ===================== -->
+<div class="hb-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+<div class="hb-grid"></div>
+
+<!-- ===================== HEADER ===================== -->
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="#" aria-label="Hela Color Platte home">
+      <span class="logo-mark">
+        <img class="logo-img" id="headerLogo" src="{{ url_for('static', filename='img/logo.png') }}" alt="Hela Color Platte logo">
+        <!-- fallback bars (shown only if logo.png fails) -->
+        <span class="logo-bars" id="headerLogoFallback" hidden><i></i><i></i><i></i><i></i></span>
+      </span>
+      <span>Hela Color Platte</span>
+    </a>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-filter="trending">Trending</button>
+      <button class="tab" data-filter="popular">Popular</button>
+      <button class="tab" data-filter="random">Random</button>
+      <button class="tab" data-filter="saved">Saved <span class="badge" id="savedCount"></span></button>
+    </nav>
+
+    <button class="btn-generate" id="generateBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+        <path d="M21 3v6h-6"></path>
+      </svg>
+      Generate
+    </button>
+  </div>
+</header>
+
+<!-- ===================== GRID ===================== -->
+<main>
+  <div class="grid" id="grid"></div>
+  <div id="sentinel"></div>
+</main>
+
+<!-- ===================== FLOATING BUTTON ===================== -->
+<button class="fab" id="fab">
+  Press <kbd>SPACE</kbd> to generate palettes
+</button>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="{{ url_for('static', filename='js/helaplatte.js') }}"></script>
+</body>
+</html>

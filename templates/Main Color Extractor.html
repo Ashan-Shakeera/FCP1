@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Apollobery.AI · ChromaCore Color Extractor</title>
+    
+    <!-- ===== EXTERNAL CSS ===== -->
+    <link rel="stylesheet" href="/static/styles/main-extractor.css" />
+</head>
+<body>
+<div class="container">
+    <!-- Apollobery.AI Navbar with Home Button & Dark Mode Toggle -->
+    <div class="app-nav">
+        <div class="nav-brand">Helaberry · </div>
+        <div class="nav-actions">
+            <!-- HOME BUTTON now links to homepage.html -->
+            <button id="homePageBtn" class="home-nav-btn">🏠 Home</button>
+            <button id="darkModeToggle" class="theme-toggle-btn">🌙 Dark Mode</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>Main Color Extractor</h1>
+        <div class="sub">Extract only the main colors — no sub‑shades, pure dominant palette</div>
+    </div>
+
+    <div class="upload-card">
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-icon">🖼️✨</div>
+            <div>Drag & drop image here or</div>
+            <label class="file-label" for="fileInput">Browse from device</label>
+            <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp">
+            <div style="font-size: 0.7rem; margin-top: 12px;">JPG, PNG, WebP · up to 50MB</div>
+        </div>
+        <div class="preview-area" id="previewContainer" style="display: none;">
+            <img id="previewImage" class="preview-img" alt="preview">
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>🎨 Number of main colors:</label>
+                <input type="range" id="numColorsSlider" min="5" max="30" step="1" value="12">
+                <span id="numColorsValue" class="num-colors-value">12</span>
+            </div>
+            <button id="analyzeBtn" class="analyze-btn">⚡ Extract main colors</button>
+        </div>
+
+        <div id="loadingIndicator" style="display: flex; justify-content: center; min-height: 50px;"></div>
+    </div>
+
+    <div id="resultsPanel" style="display: none;">
+        <div class="stats-bar">
+            <div>
+                <span>🎯 <span id="mainColorsCount">0</span> main colors</span>
+                <span style="margin-left: 20px;">📸 <span id="analyzedPixels">0</span> pixels sampled</span>
+            </div>
+            <div class="btn-group">
+                <button id="copyAllHexBtn" class="btn">📋 Copy all HEX</button>
+                <button id="exportCSVBtn" class="btn">📎 Export CSV</button>
+                <button id="exportJSONBtn" class="btn">📄 Export JSON</button>
+            </div>
+        </div>
+        <div id="colorGridContainer" class="color-grid"></div>
+        <div id="infoMessage" class="info-message" style="display: none;"></div>
+    </div>
+    <div class="footer-note">
+        💡 Main colors found using k‑means clustering – similar shades merged into representative palettes.<br>
+        Click any color to copy hex code. Powered by <strong>Apollobery.AI</strong> — intelligent color intelligence.
+    </div>
+</div>
+
+<!-- ===== EXTERNAL JS ===== -->
+<script src="/static/js/main-extractor.js"></script>
+
+</body>
+</html>

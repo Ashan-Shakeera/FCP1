@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>Helaberry · Sign In / Sign Up</title>
+
+    <!-- ===== FAVICON (uses your logo) ===== -->
+    <link rel="icon" type="image/png" href="/static/images/logo.png">
+    <link rel="apple-touch-icon" href="/static/images/logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
+    <!-- ===== EXTERNAL CSS ===== -->
+    <link rel="stylesheet" href="/static/styles/signinup.css" />
+</head>
+<body>
+
+    <!-- ===== SPLASH SCREEN ===== -->
+    <div class="splash" id="splash" role="status" aria-label="Loading Helaberry">
+        <div class="splash-glow" aria-hidden="true"></div>
+        <img class="splash-logo" id="splashLogo" src="/static/images/logo.png" alt="Helaberry logo">
+        <span class="splash-fallback" id="splashFallback" hidden>H</span>
+        <h1 class="splash-title">Helaberry</h1>
+        <div class="splash-bar" aria-hidden="true"><i></i></div>
+    </div>
+
+    <noscript><style>.splash { display: none !important; }</style></noscript>
+
+    <!-- ===== FIXED NAVIGATION BAR ===== -->
+    <nav class="navbar" id="navbar">
+        <a class="nav-brand" href="/">
+            <span class="brand-icon">
+                <span class="brand-letter">H</span>
+                <img src="/static/images/logo.png" alt="Helaberry logo" onerror="this.remove();">
+            </span>
+            <span class="brand-name">Helaberry</span>
+        </a>
+
+        <div class="nav-actions">
+            <a class="nav-btn nav-btn-outline" href="/">
+                <i class="fas fa-house"></i> Home
+            </a>
+            <span class="nav-divider">|</span>
+            <button class="nav-btn nav-btn-primary" data-switch="signup">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="nav-mobile-menu" id="mobileMenu">
+            <a class="nav-btn nav-btn-outline" href="/" style="width:100%;justify-content:center;">
+                <i class="fas fa-house"></i> Home
+            </a>
+            <button class="nav-btn nav-btn-primary" data-switch="signup" style="width:100%;justify-content:center;">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===== ANIMATED BACKGROUND ===== -->
+    <div class="bg-canvas">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+    <div class="bg-grid"></div>
+
+    <!-- ===== AUTH WRAPPER ===== -->
+    <main class="auth-wrapper">
+        <div class="auth-card" id="authCard">
+
+            <!-- ============ LEFT: SHOWCASE + VIDEOS ============ -->
+            <aside class="auth-showcase" id="authShowcase">
+
+                <!-- Sign In video — 3.mp4 -->
+                <div class="panel-video" id="signinVideo">
+                    <video autoplay loop muted playsinline preload="auto">
+                        <source src="/static/videos/3.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <!-- Sign Up video — 2.mp4 -->
+                <div class="panel-video" id="signupVideo">
+                    <video autoplay loop muted playsinline preload="auto">
+                        <source src="/static/videos/2.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <div class="showcase-glow g1"></div>
+                <div class="showcase-glow g2"></div>
+
+                <a class="brand" href="/">
+                    <div class="brand-icon">
+                        <span class="brand-letter">H</span>
+                        <img src="/static/images/logo.png" alt="Helaberry logo" onerror="this.remove();">
+                    </div>
+                    <div>
+                        <div class="brand-name">Helaberry</div>
+                        <div class="brand-sub">creative platform</div>
+                    </div>
+                </a>
+
+                <div class="showcase-mid">
+                    <h2>Where <span class="highlight">ideas</span><br>come alive.</h2>
+                    <p>
+                        Join a community of creators, dreamers, and innovators.
+                        Share your work, discover inspiration, and bring your vision to life.
+                    </p>
+
+                    <ul class="showcase-list">
+                        <li><i class="fas fa-wand-magic-sparkles"></i> AI-powered creation studio</li>
+                        <li><i class="fas fa-users"></i> Real-time collaboration rooms</li>
+                        <li><i class="fas fa-image"></i> 45K+ assets &amp; inspiration feed</li>
+                        <li><i class="fas fa-shield-halved"></i> Secure &amp; private by default</li>
+                    </ul>
+                </div>
+
+                <div class="showcase-foot">
+                    <div class="avatars">
+                        <span style="background:linear-gradient(135deg,#7c6cf0,#a29bfe)">A</span>
+                        <span style="background:linear-gradient(135deg,#f472b6,#a78bfa)">M</span>
+                        <span style="background:linear-gradient(135deg,#38bdf8,#818cf8)">K</span>
+                        <span style="background:linear-gradient(135deg,#4ade80,#22d3ee)">R</span>
+                        <span class="more">+12K</span>
+                    </div>
+                    <p>Trusted by <strong>12,000+ creators</strong><br>around the world.</p>
+                </div>
+            </aside>
+
+            <!-- ============ RIGHT: FORMS ============ -->
+            <section class="auth-panel">
+
+                <!-- Mobile brand -->
+                <a class="mobile-brand" href="/">
+                    <span class="brand-icon">
+                        <span class="brand-letter">H</span>
+                        <img src="/static/images/logo.png" alt="Helaberry logo" onerror="this.remove();">
+                    </span>
+                    <span class="brand-name">Helaberry</span>
+                </a>
+
+                <!-- Tabs -->
+                <div class="tabs" id="tabs">
+                    <button class="tab active" data-view="signin" type="button">Sign In</button>
+                    <button class="tab" data-view="signup" type="button">Sign Up</button>
+                    <span class="tab-slider" id="tabSlider"></span>
+                </div>
+
+                <div class="views">
+
+                    <!-- ================= SIGN IN ================= -->
+                    <form class="auth-view active" id="view-signin" novalidate>
+                        <header class="view-head">
+                            <h3>Welcome back 👋</h3>
+                            <p>Sign in to continue to your creative space.</p>
+                        </header>
+
+                        <div class="field" id="f-si-user">
+                            <label for="si-user">Username</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-user lead"></i>
+                                <input type="text" id="si-user" placeholder="yourname" autocomplete="username" spellcheck="false" />
+                            </div>
+                            <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                        </div>
+
+                        <div class="field" id="f-si-pass">
+                            <label for="si-pass">Password</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-lock lead"></i>
+                                <input type="password" id="si-pass" placeholder="••••••••" autocomplete="current-password" />
+                                <button type="button" class="toggle-pass" data-target="si-pass" aria-label="Show password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                        </div>
+
+                        <div class="form-meta">
+                            <label class="check">
+                                <input type="checkbox" id="si-remember" checked />
+                                <span class="box"><i class="fas fa-check"></i></span>
+                                Remember me
+                            </label>
+                            <span class="link" data-go="forgot">Forgot password?</span>
+                        </div>
+
+                        <button class="btn btn-primary btn-block btn-shimmer" type="submit" id="si-submit">
+                            <span>Sign In</span> <i class="fas fa-arrow-right"></i>
+                        </button>
+
+                        <div class="or-divider">or continue with</div>
+
+                        <div class="social-row">
+                            <button type="button" class="btn-social" data-social="Google">
+                                <i class="fab fa-google"></i> Google
+                            </button>
+                            <button type="button" class="btn-social" data-social="GitHub">
+                                <i class="fab fa-github"></i> GitHub
+                            </button>
+                        </div>
+
+                        <div class="view-foot">
+                            Don't have an account? <span class="link" data-go="signup">Create one</span>
+                        </div>
+
+                        <div class="demo-hint">
+                            <i class="fas fa-key"></i>
+                            Demo account: <code>demo</code> / <code>demo1234</code>
+                            <span class="link" id="fillDemo">Fill</span>
+                        </div>
+                    </form>
+
+                    <!-- ================= SIGN UP ================= -->
+                    <form class="auth-view" id="view-signup" novalidate>
+                        <header class="view-head">
+                            <h3>Create your account ✨</h3>
+                            <p>Start creating in less than a minute — it's free.</p>
+                        </header>
+
+                        <div class="field-row">
+                            <div class="field" id="f-su-user">
+                                <label for="su-user">Username</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-user lead"></i>
+                                    <input type="text" id="su-user" placeholder="yourname" autocomplete="username" spellcheck="false" />
+                                </div>
+                                <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                            </div>
+
+                            <div class="field" id="f-su-email">
+                                <label for="su-email">Email</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-envelope lead"></i>
+                                    <input type="email" id="su-email" placeholder="you@email.com" autocomplete="email" spellcheck="false" />
+                                </div>
+                                <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                            </div>
+                        </div>
+
+                        <div class="field" id="f-su-role">
+                            <label for="su-role">Job role</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-briefcase lead"></i>
+                                <select id="su-role" class="placeholder">
+                                    <option value="" disabled selected hidden>Select your role…</option>
+                                    <option value="Graphic Designer">Graphic Designer</option>
+                                    <option value="UI/UX Designer">UI/UX Designer</option>
+                                    <option value="Painter">Painter</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Illustrator">Illustrator</option>
+                                    <option value="Photographer">Photographer</option>
+                                    <option value="Motion Designer">Motion Designer</option>
+                                    <option value="3D Artist">3D Artist</option>
+                                    <option value="Content Creator">Content Creator</option>
+                                    <option value="other">Other…</option>
+                                </select>
+                                <i class="fas fa-chevron-down trail"></i>
+                            </div>
+                            <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                        </div>
+
+                        <!-- Custom role (only for "Other") -->
+                        <div class="field" id="f-su-role-custom" style="display:none;">
+                            <label for="su-role-custom">Tell us your role</label>
+                            <div class="input-wrap">
+                                <i class="fas fa-pen lead"></i>
+                                <input type="text" id="su-role-custom" placeholder="e.g. Art Director" spellcheck="false" />
+                            </div>
+                            <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field" id="f-su-pass">
+                                <label for="su-pass">Password</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-lock lead"></i>
+                                    <input type="password" id="su-pass" placeholder="••••••••" autocomplete="new-password" />
+                                    <button type="button" class="toggle-pass" data-target="su-pass" aria-label="Show password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                            </div>
+
+                            <div class="field" id="f-su-pass2">
+                                <label for="su-pass2">Confirm password</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-lock lead"></i>
+                                    <input type="password" id="su-pass2" placeholder="••••••••" autocomplete="new-password" />
+                                    <button type="button" class="toggle-pass" data-target="su-pass2" aria-label="Show password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                            </div>
+                        </div>
+
+                        <div class="strength">
+                            <div class="strength-bars" id="strengthBars">
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                            <span class="strength-label" id="strengthLabel">Strength</span>
+                        </div>
+
+                        <div class="field" id="f-su-terms" style="margin-top:18px;">
+                            <label class="check">
+                                <input type="checkbox" id="su-terms" />
+                                <span class="box"><i class="fas fa-check"></i></span>
+                                <span>I agree to the <a href="#" onclick="return false;">Terms of Service</a> and <a href="#" onclick="return false;">Privacy Policy</a></span>
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary btn-block btn-shimmer" type="submit" id="su-submit" style="margin-top:18px;">
+                            <span>Create Account</span> <i class="fas fa-arrow-right"></i>
+                        </button>
+
+                        <div class="view-foot">
+                            Already have an account? <span class="link" data-go="signin">Sign in</span>
+                        </div>
+                    </form>
+
+                    <!-- ================= FORGOT PASSWORD ================= -->
+                    <div class="auth-view" id="view-forgot">
+
+                        <!-- Step 1: request -->
+                        <div class="forgot-form" id="forgotForm">
+                            <button type="button" class="back-link" data-go="signin">
+                                <i class="fas fa-arrow-left"></i> Back to sign in
+                            </button>
+
+                            <div class="icon-badge"><i class="fas fa-key"></i></div>
+
+                            <header class="view-head">
+                                <h3>Forgot password?</h3>
+                                <p>No worries — enter the email linked to your account and we'll send you a reset link.</p>
+                            </header>
+
+                            <div class="field" id="f-fp-email">
+                                <label for="fp-email">Email address</label>
+                                <div class="input-wrap">
+                                    <i class="fas fa-envelope lead"></i>
+                                    <input type="email" id="fp-email" placeholder="you@email.com" autocomplete="email" spellcheck="false" />
+                                </div>
+                                <span class="err-msg"><i class="fas fa-circle-exclamation"></i><span class="err-text"></span></span>
+                            </div>
+
+                            <button class="btn btn-primary btn-block btn-shimmer" type="button" id="fp-submit" style="margin-top:10px;">
+                                <span>Send reset link</span> <i class="fas fa-paper-plane"></i>
+                            </button>
+
+                            <div class="view-foot">
+                                Remembered it? <span class="link" data-go="signin">Sign in</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: success -->
+                        <div class="forgot-success" id="forgotSuccess">
+                            <div class="success-badge"><i class="fas fa-check"></i></div>
+                            <h3>Check your inbox</h3>
+                            <p>We've sent a password reset link to</p>
+                            <div class="email-chip" id="fp-success-email">you@email.com</div>
+                            <p style="margin-bottom:22px;">
+                                Didn't get the email? Check your spam folder or try again.
+                            </p>
+                            <div class="success-actions">
+                                <button class="btn btn-primary btn-block" type="button" id="fp-resend">
+                                    <span>Resend email</span> <i class="fas fa-rotate-right"></i>
+                                </button>
+                                <button class="btn btn-block" type="button" data-go="signin"
+                                        style="border:1.5px solid rgba(255,255,255,.10); color:var(--text-secondary); background:rgba(255,255,255,.03);">
+                                    <i class="fas fa-arrow-left"></i> Back to Sign In
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ===== EXTERNAL JS ===== -->
+    <script src="/static/js/signinup.js"></script>
+
+</body>
+</html>

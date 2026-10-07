@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LineLab · Image to Line Art Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- ===== EXTERNAL CSS ===== -->
+<link rel="stylesheet" href="/static/styles/linelab.css" />
+</head>
+<body>
+
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand" id="brandBtn">
+      <div class="brand-icon">L</div>
+      <div>
+        <div class="brand-name">LineLab</div>
+        <div class="brand-sub">image · to · line</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <!-- HOME BUTTON -->
+    <a class="tb-btn icon-only home" id="homeBtn" href="homepage.html" title="Home" aria-label="Go to homepage">
+      <i class="fas fa-house"></i>
+    </a>
+
+    <button class="tb-btn icon-only" id="newBtn" title="New image" disabled><i class="fas fa-plus"></i></button>
+    <button class="tb-btn icon-only" id="sidebarToggle" title="Toggle settings" style="display:none;"><i class="fas fa-sliders"></i></button>
+    <div class="spacer"></div>
+    <button class="tb-btn outline" id="pngBtn" disabled><i class="fas fa-image"></i> <span class="hide-mobile">PNG</span></button>
+    <button class="tb-btn outline" id="svgBtn" disabled><i class="fas fa-bezier-curve"></i> <span class="hide-mobile">SVG</span></button>
+    <button class="tb-btn primary" id="shareBtn" disabled><i class="fas fa-share-nodes"></i> <span class="hide-mobile">Share</span></button>
+    <div class="avatar" title="Account">LL</div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- CANVAS AREA -->
+    <div class="canvas-area">
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState">
+        <div class="drop-zone" id="dropZone">
+          <div class="glow"></div>
+          <div class="dz-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+          <h1>Turn any photo into line art</h1>
+          <p>Drop an image below. Our algorithms automatically trace edges, contours, and shading to generate a clean line drawing — instantly.</p>
+          <div class="dz-actions">
+            <button class="btn primary" id="chooseBtn"><i class="fas fa-image"></i> Choose image</button>
+            <button class="btn ghost" id="demoBtn"><i class="fas fa-sparkles"></i> Try demo</button>
+          </div>
+          <div class="dz-divider">OR PASTE URL</div>
+          <div class="url-input-wrap">
+            <input type="url" id="urlInput" placeholder="https://example.com/photo.jpg" />
+            <button class="btn primary" id="urlLoadBtn" style="flex-shrink:0;"><i class="fas fa-arrow-right"></i></button>
+          </div>
+          <div class="feature-chips">
+            <span class="chip"><i class="fas fa-pen-fancy"></i> 6 algorithms</span>
+            <span class="chip"><i class="fas fa-bolt"></i> Instant</span>
+            <span class="chip"><i class="fas fa-lock"></i> 100% private</span>
+            <span class="chip"><i class="fas fa-download"></i> PNG &amp; SVG</span>
+          </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden />
+      </div>
+
+      <!-- EDITOR -->
+      <div class="editor" id="editor" style="display:none;">
+        <div class="view-toggle" id="viewToggle">
+          <button data-view="original"><i class="fas fa-image"></i> Original</button>
+          <button data-view="split" class="active"><i class="fas fa-columns"></i> Split</button>
+          <button data-view="result"><i class="fas fa-pen-fancy"></i> Line art</button>
+        </div>
+
+        <div class="comparison" id="comparison">
+          <div class="comparison-canvas-wrap" id="canvasWrap">
+            <div class="comparison-img-wrap" id="imgWrap">
+              <img id="originalImg" alt="Original" draggable="false" />
+              <div class="result-layer" id="resultLayer">
+                <canvas id="resultCanvas"></canvas>
+              </div>
+              <div class="view-label orig">Original</div>
+              <div class="view-label res">Line art</div>
+            </div>
+          </div>
+          <div class="split-slider" id="splitSlider" style="left:50%;"></div>
+        </div>
+
+        <div class="canvas-meta">
+          <span><strong id="metaDim">—</strong></span>
+          <span class="dot"></span>
+          <span><strong id="metaAlgo">—</strong></span>
+          <span class="dot"></span>
+          <span id="metaTime">—</span>
+        </div>
+      </div>
+
+      <!-- PROCESSING -->
+      <div class="processing" id="processing" style="display:none;">
+        <div class="spinner"></div>
+        <span id="progressLabel">Processing…</span>
+        <div class="progress"><div class="progress-bar" id="progressBar" style="width:0%;"></div></div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Line generation</h2>
+        <span class="badge">Live</span>
+      </div>
+      <div class="sidebar-body">
+
+        <div class="field-group">
+          <label>Algorithm</label>
+          <div class="algo-grid" id="algoGrid">
+            <button class="algo-btn active" data-algo="sketch"><i class="fas fa-pencil"></i>Sketch</button>
+            <button class="algo-btn" data-algo="pencil"><i class="fas fa-pen-fancy"></i>Pencil</button>
+            <button class="algo-btn" data-algo="edges"><i class="fas fa-bolt"></i>Edges</button>
+            <button class="algo-btn" data-algo="canny"><i class="fas fa-wave-square"></i>Canny</button>
+            <button class="algo-btn" data-algo="xdog"><i class="fas fa-fingerprint"></i>XDoG</button>
+            <button class="algo-btn" data-algo="threshold"><i class="fas fa-circle-half-stroke"></i>Threshold</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Blur / smoothing <span class="val" id="blurVal">1.0</span></label>
+          <div class="slider-wrap">
+            <input type="range" class="slider" id="blur" min="0" max="8" step="0.1" value="1" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Threshold / sensitivity <span class="val" id="thresholdVal">50</span></label>
+          <div class="slider-wrap">
+            <input type="range" class="slider" id="threshold" min="1" max="100" step="1" value="50" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Line thickness <span class="val" id="lineWidthVal">1.0</span></label>
+          <div class="slider-wrap">
+            <input type="range" class="slider" id="lineWidth" min="0.5" max="4" step="0.1" value="1" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Contrast <span class="val" id="contrastVal">1.0</span></label>
+          <div class="slider-wrap">
+            <input type="range" class="slider" id="contrast" min="0.5" max="3" step="0.1" value="1" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Output</label>
+          <div class="toggle-row" id="invertToggle">
+            <span><i class="fas fa-circle-half-stroke" style="margin-right:8px;color:var(--text-4);"></i>Invert (white on black)</span>
+            <div class="toggle" id="invertSwitch"></div>
+          </div>
+          <div class="toggle-row" id="transparentToggle">
+            <span><i class="fas fa-checkerboard" style="margin-right:8px;color:var(--text-4);"></i>Transparent background</span>
+            <div class="toggle" id="transparentSwitch"></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Background color</label>
+          <div class="color-row">
+            <div class="color-swatch-lg" id="bgSwatch">
+              <input type="color" id="bgColor" value="#ffffff" />
+            </div>
+            <input type="text" class="color-hex" id="bgHex" value="#FFFFFF" />
+          </div>
+          <div class="preset-bg" id="presetBg">
+            <button data-bg="#ffffff" class="active" style="background:#ffffff;"></button>
+            <button data-bg="#000000" style="background:#000000;"></button>
+            <button data-bg="#f5f1e8" style="background:#f5f1e8;"></button>
+            <button data-bg="#1a1a1a" style="background:#1a1a1a;"></button>
+            <button data-bg="#7c6cf0" style="background:#7c6cf0;"></button>
+          </div>
+        </div>
+
+        <div class="sidebar-actions">
+          <button class="btn primary" id="applyBtn"><i class="fas fa-bolt"></i> Re-apply</button>
+          <div class="btn-group-2">
+            <button class="btn ghost" id="resetBtn"><i class="fas fa-rotate-left"></i> Reset</button>
+            <button class="btn ghost" id="fullscreenBtn"><i class="fas fa-expand"></i> Full</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="drop-overlay" id="dropOverlay">
+  <div class="inner">
+    <i class="fas fa-cloud-arrow-down"></i>
+    <h2>Drop your image</h2>
+    <p style="color:var(--text-3);">Release to generate line art</p>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<!-- ===== EXTERNAL JS ===== -->
+<script src="/static/js/linelab.js"></script>
+
+</body>
+</html>

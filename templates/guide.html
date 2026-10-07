@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+<meta name="theme-color" content="#070b13" />
+<title>Helaberry · Studio Guide & Documentation</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/guide.css') }}" />
+</head>
+<body>
+
+<!-- ==================== BACKGROUND ==================== -->
+<div class="hb-bg">
+  <div class="hb-orb hb-orb-1"></div>
+  <div class="hb-orb hb-orb-2"></div>
+  <div class="hb-orb hb-orb-3"></div>
+  <div class="hb-orb hb-orb-4"></div>
+</div>
+<div class="hb-grid"></div>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="hb-nav">
+  <a class="hb-nav-brand" href="{{ url_for('homepage') }}">
+    <!-- LOGO IMAGE (falls back to "H" badge if logo.png is missing) -->
+    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry Logo" class="hb-brand-logo" id="brandLogo"
+         onerror="this.style.display='none'; var f=document.getElementById('brandFallbackIcon'); if(f){f.style.display='flex';}">
+    <span class="hb-brand-fallback" id="brandFallbackIcon">H</span>
+    <div>
+      <div class="hb-nav-name">Helaberry</div>
+      <div class="hb-nav-sub">Studio Guide</div>
+    </div>
+  </a>
+
+  <div class="hb-nav-actions">
+    <a class="hb-nav-btn" href="{{ url_for('homepage') }}">
+      <i class="fas fa-house"></i> Home
+    </a>
+    <a class="hb-nav-btn primary" href="{{ url_for('design_hub') }}">
+      <i class="fas fa-wand-magic-sparkles"></i> Open Design Hub
+    </a>
+    <button class="hb-hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="hb-mobile-menu" id="mobileMenu">
+    <a class="hb-nav-btn" href="{{ url_for('homepage') }}"><i class="fas fa-house"></i> Home</a>
+    <a class="hb-nav-btn primary" href="{{ url_for('design_hub') }}"><i class="fas fa-wand-magic-sparkles"></i> Open Design Hub</a>
+  </div>
+</nav>
+
+<!-- ==================== LAYOUT ==================== -->
+<div class="hb-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="hb-sidebar hb-collapsed" id="sidebar">
+
+    <div class="hb-side-card">
+      <div class="hb-side-title"><i class="fas fa-search"></i> Find a Tool</div>
+      <div class="hb-search-wrap">
+        <i class="fas fa-magnifying-glass hb-search-icon"></i>
+        <input type="text" class="hb-search-input" id="searchInput" placeholder="Search tools, features…" autocomplete="off" />
+        <button class="hb-search-clear" id="searchClear" aria-label="Clear"><i class="fas fa-xmark"></i></button>
+      </div>
+      <button class="hb-side-link active" data-filter="all"><i class="fas fa-layer-group"></i> All Tools <span class="badge" id="countAll">0</span></button>
+    </div>
+
+    <div class="hb-side-card">
+      <div class="hb-side-title"><i class="fas fa-compass"></i> Categories</div>
+      <button class="hb-side-link" data-filter="color"><i class="fas fa-palette"></i> Color &amp; AI <span class="badge" id="countColor">0</span></button>
+      <button class="hb-side-link" data-filter="design"><i class="fas fa-pen-ruler"></i> Design Studios <span class="badge" id="countDesign">0</span></button>
+      <button class="hb-side-link" data-filter="image"><i class="fas fa-image"></i> Image Editing <span class="badge" id="countImage">0</span></button>
+      <button class="hb-side-link" data-filter="paint"><i class="fas fa-paintbrush"></i> Painting &amp; Art <span class="badge" id="countPaint">0</span></button>
+      <button class="hb-side-link" data-filter="creative"><i class="fas fa-lightbulb"></i> Creative Tools <span class="badge" id="countCreative">0</span></button>
+      <button class="hb-side-link" data-filter="platform"><i class="fas fa-globe"></i> Platform <span class="badge" id="countPlatform">0</span></button>
+    </div>
+
+    <div class="hb-side-card">
+      <div class="hb-side-title"><i class="fas fa-bolt"></i> Quick Start</div>
+      <a class="hb-side-link" href="{{ url_for('homepage') }}"><i class="fas fa-house"></i> Homepage</a>
+      <a class="hb-side-link" href="{{ url_for('signinup') }}"><i class="fas fa-right-to-bracket"></i> Sign In / Sign Up</a>
+      <a class="hb-side-link" href="{{ url_for('design_hub') }}"><i class="fas fa-wand-magic-sparkles"></i> Design Hub</a>
+      <a class="hb-side-link" href="{{ url_for('main_dashboard') }}"><i class="fas fa-chart-line"></i> Dashboard</a>
+    </div>
+
+    <div class="hb-side-card">
+      <div class="hb-side-title"><i class="fas fa-headset"></i> Support</div>
+      <a class="hb-side-link" href="{{ url_for('homepage') }}#help"><i class="fas fa-circle-question"></i> Help Center</a>
+      <a class="hb-side-link" href="{{ url_for('homepage') }}"><i class="fas fa-envelope"></i> Contact Team</a>
+    </div>
+
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="hb-main">
+
+    <!-- Hero -->
+    <section class="hb-hero">
+      <div class="hb-hero-content">
+        <span class="hb-hero-eyebrow"><i class="fas fa-book-open"></i> Studio Documentation</span>
+        <h1>Everything you need to <span class="shine">master the studio</span>.</h1>
+        <p>
+          A complete guide to every tool in the Helaberry creative platform — from AI-driven color intelligence
+          and professional design editors to painting engines and vector illustration suites.
+          Search, explore, and open any tool directly.
+        </p>
+        <div class="hb-hero-stats">
+          <span class="hb-hero-stat"><i class="fas fa-toolbox"></i> <strong id="heroToolCount">24</strong> Tools</span>
+          <span class="hb-hero-stat"><i class="fas fa-layer-group"></i> <strong>6</strong> Categories</span>
+          <span class="hb-hero-stat"><i class="fas fa-bolt"></i> Instant Access</span>
+          <span class="hb-hero-stat"><i class="fas fa-shield-halved"></i> 100% Local</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section head -->
+    <div class="hb-section-head">
+      <h2><i class="fas fa-toolbox"></i> <span id="sectionTitle">All Tools</span></h2>
+      <span class="count" id="resultCount">24 tools</span>
+    </div>
+
+    <!-- Grid -->
+    <div class="hb-grid-cards" id="toolGrid"></div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="hb-footer">
+    Built with <span class="heart">♥</span> for creators &middot; Helaberry Studio Guide &middot; © 2025<br>
+    <span style="opacity:.6;">Every tool runs entirely in your browser — no data ever leaves your device.</span>
+  </footer>
+
+</div>
+
+<!-- ==================== MODAL ==================== -->
+<div class="hb-modal-backdrop" id="modalBackdrop">
+  <div class="hb-modal" id="modal">
+    <div class="hb-modal-head">
+      <div class="hb-modal-title-wrap">
+        <div class="hb-modal-icon" id="modalIcon"></div>
+        <div class="hb-modal-title-info">
+          <h2 id="modalTitle">Tool Name</h2>
+          <p id="modalFile">file.html</p>
+        </div>
+      </div>
+      <button class="hb-modal-close" id="modalClose" aria-label="Close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="hb-modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Tool routes map — tells JS how to build the correct URL for each tool -->
+<script>
+  window.HB_TOOL_ROUTES = {
+    'ai-prompt-palette':  "{{ url_for('tool_ai_prompt_palette') }}",
+    'color-compass':      "{{ url_for('tool_color_compass') }}",
+    'hela-platte':        "{{ url_for('tool_hela_platte') }}",
+    'main-extractor':     "{{ url_for('tool_main_extractor') }}",
+    'full-breakdown':     "{{ url_for('tool_full_breakdown') }}",
+    'color-mix-game':     "{{ url_for('tool_color_mix_game') }}",
+    'design-studio':      "{{ url_for('tool_design_studio') }}",
+    'hela-ui':            "{{ url_for('tool_hela_ui') }}",
+    'vectorforge':        "{{ url_for('tool_vectorforge') }}",
+    'mandala-studio':     "{{ url_for('tool_mandala_studio') }}",
+    'design-hub':         "{{ url_for('design_hub') }}",
+    'image-studio':       "{{ url_for('image_studio') }}",
+    'line-lab':           "{{ url_for('tool_line_lab') }}",
+    'pixelforge':         "{{ url_for('tool_pixelforge') }}",
+    'live-painting':      "{{ url_for('tool_live_painting') }}",
+    'line-pro':           "{{ url_for('tool_line_pro') }}",
+    'chromafill':         "{{ url_for('tool_chromafill') }}",
+    'hela-fill':          "{{ url_for('tool_hela_fill') }}",
+    'interior-studio':    "{{ url_for('interior') }}",
+    'fashion-matcher':    "{{ url_for('tool_fashion_matcher') }}",
+    'sign-studio':        "{{ url_for('sign_studio') }}",
+    'homepage':           "{{ url_for('homepage') }}",
+    'main-dashboard':     "{{ url_for('main_dashboard') }}",
+    'auth':               "{{ url_for('signinup') }}",
+    'welcome':            "{{ url_for('welcome') }}"
+  };
+</script>
+
+<script src="{{ url_for('static', filename='js/guide.js') }}"></script>
+</body>
+</html>

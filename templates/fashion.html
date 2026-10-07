@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="theme-color" content="#38bdf8" />
+    <title>HelaBerry.AI · Fashion Chatbot + Chroma Matcher</title>
+
+    <!-- Favicon (uses your logo) -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/fashion.css') }}" />
+</head>
+<body>
+    <div class="app-wrapper">
+
+        <!-- ─── COPY FEEDBACK ─── -->
+        <div id="copyFeedback" class="copy-feedback">📋 Copied to clipboard!</div>
+
+        <!-- ─── NAV ─── -->
+        <nav class="app-nav">
+            <a href="#" class="nav-brand" id="brandLink">
+                <!-- LOGO IMAGE (falls back to ✨ if logo.png is missing) -->
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="HelaBerry Logo" class="brand-logo" id="brandLogo"
+                     onerror="this.style.display='none'; var f=document.getElementById('brandFallbackIcon'); if(f){f.style.display='inline-block';}" />
+                <em class="brand-fallback" id="brandFallbackIcon">✨</em>
+                HelaBerry.AI
+                <span>v3.0 · Fashion</span>
+            </a>
+            <div class="nav-actions">
+                <a href="{{ url_for('homepage') }}" class="home-btn">🏠 Home</a>
+                <button id="resetAllBtn">🔄 New Look</button>
+                <button id="darkModeToggle">🌙 Dark Mode</button>
+            </div>
+        </nav>
+
+        <!-- ─── HEADER ─── -->
+        <header class="header">
+            <h1>Dress Color to Bag &amp; Jewelry Matcher</h1>
+            <div class="sub">Upload your dress · Get intelligent bag &amp; jewelry color codes</div>
+        </header>
+
+        <!-- ─── MAIN GRID ─── -->
+        <div class="main-grid">
+
+            <!-- ─── LEFT COLUMN ─── -->
+            <div class="left-col">
+
+                <!-- Upload Card -->
+                <div class="upload-card">
+                    <div class="drop-zone" id="dropZone">
+                        <span class="drop-icon">👗📸</span>
+                        <p>Drag &amp; drop your dress image here</p>
+                        <label class="file-label" for="fileInput">Upload dress photo</label>
+                        <input type="file" id="fileInput" accept="image/jpeg, image/png, image/webp" />
+                        <div class="hint">JPG, PNG, WebP · up to 50MB</div>
+                    </div>
+                    <div class="preview-area hidden" id="previewContainer">
+                        <img id="previewImage" class="preview-img" alt="dress preview" />
+                    </div>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>🎨 <span style="font-weight:400;color:var(--text-secondary);">Colors</span></label>
+                            <input type="range" id="numColorsSlider" min="3" max="20" step="1" value="8" />
+                            <span id="numColorsValue" class="num-colors-value">8</span>
+                        </div>
+                        <button id="analyzeBtn" class="analyze-btn">✨ Extract &amp; Match</button>
+                    </div>
+                    <div class="loader-wrap" id="loadingIndicator"></div>
+                </div>
+
+                <!-- Results -->
+                <div id="resultsPanel">
+                    <div class="stats-bar">
+                        <div class="stat-item">🎨 <strong id="mainColorsCount">0</strong> dominant colors</div>
+                        <div class="stat-item">📸 <strong id="analyzedPixels">0</strong> pixels</div>
+                        <div class="btn-group">
+                            <button id="copyAllHexBtn" class="btn">📋 Copy dress HEX</button>
+                        </div>
+                    </div>
+                    <div id="colorGridContainer" class="color-grid"></div>
+
+                    <!-- Match Sections -->
+                    <div class="match-sections" id="matchSection">
+                        <div class="match-card">
+                            <div class="match-title"><span>👜</span> Bag Color Match</div>
+                            <div id="bagSuggestionsList" class="color-suggestion-list">
+                                <div class="info-message">✨ Extract dress colors to see bag matches</div>
+                            </div>
+                        </div>
+                        <div class="match-card">
+                            <div class="match-title"><span>💎</span> Jewelry / Accessory Match</div>
+                            <div id="jewelrySuggestionsList" class="color-suggestion-list">
+                                <div class="info-message">✨ Extract dress colors for jewelry palettes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="infoMessage" class="info-message" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- ─── RIGHT COLUMN: CHATBOT ─── -->
+            <div class="right-col">
+                <div class="chatbot-card glow-pulse">
+                    <div class="chat-header">
+                        <span class="status-dot"></span>
+                        💬 Fashion AI Assistant
+                        <span class="badge">⚡ LIVE</span>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-msg bot">👋 Hi! I'm your fashion color assistant.<br>Upload a dress image, then ask me anything like:<br>• "What bag color matches my dress?"<br>• "Recommend jewelry for this outfit"<br>• "Show me complementary colors"</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Ask about colors, bags, jewelry…" autocomplete="off" />
+                        <button id="chatSendBtn">Send</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-note">
+            💡 AI color harmony: bag matches complement &amp; neutral accents · jewelry picks metallics, gemstone contrasts.<br />
+            Click any color card or match suggestion to copy HEX code. <span>⚡ Powered by XGBoost fashion model</span>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/fashion.js') }}"></script>
+</body>
+</html>

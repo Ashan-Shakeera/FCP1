@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>VectorForge Pro · Illustrator Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="/static/styles/vectot.css" />
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+        <a class="nav-brand" href="#">
+            <span class="brand-icon">✦</span>
+            <span class="brand-name">VectorForge</span>
+        </a>
+        <div class="nav-actions">
+            <button class="nav-btn nav-btn-outline" data-action="Gallery"><i class="fas fa-images"></i> Gallery</button>
+            <button class="nav-btn nav-btn-primary" data-action="Export"><i class="fas fa-download"></i> Export</button>
+            <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+        </div>
+        <div class="nav-mobile-menu" id="mobileMenu">
+            <button class="nav-btn nav-btn-outline" data-action="Gallery"><i class="fas fa-images"></i> Gallery</button>
+            <button class="nav-btn nav-btn-primary" data-action="Export"><i class="fas fa-download"></i> Export</button>
+        </div>
+    </nav>
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg-canvas"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+    <div class="bg-grid"></div>
+
+    <!-- ===== APP ===== -->
+    <div class="app-container">
+
+        <!-- TOOLBAR -->
+        <div class="toolbar" id="toolbar">
+            <div class="tool-group">
+                <span class="tool-group-label">Tool</span>
+                <button class="tool-btn active" data-tool="select" title="Select (V)"><i class="fas fa-mouse-pointer"></i></button>
+                <button class="tool-btn" data-tool="direct" title="Direct Select (A)"><i class="fas fa-arrow-pointer"></i></button>
+                <button class="tool-btn" data-tool="pen" title="Pen (P)"><i class="fas fa-pen-fancy"></i></button>
+                <button class="tool-btn" data-tool="rect" title="Rect (R)"><i class="fas fa-square"></i></button>
+                <button class="tool-btn" data-tool="ellipse" title="Ellipse (E)"><i class="fas fa-circle"></i></button>
+                <button class="tool-btn" data-tool="polygon" title="Polygon (O)"><i class="fas fa-hexagon"></i></button>
+                <button class="tool-btn" data-tool="star" title="Star (S)"><i class="fas fa-star"></i></button>
+                <button class="tool-btn" data-tool="line" title="Line (L)"><i class="fas fa-minus"></i></button>
+                <button class="tool-btn" data-tool="pencil" title="Pencil (N)"><i class="fas fa-pencil"></i></button>
+            </div>
+            <div class="tool-separator"></div>
+
+            <!-- Pen settings -->
+            <div class="tool-group" id="penSettings" style="display:none;">
+                <span class="tool-group-label">Pen</span>
+                <input type="color" id="penFill" value="#00b4ff" />
+                <input type="color" id="penStroke" value="#ffffff" />
+                <input type="range" id="penStrokeWidth" min="0.5" max="12" step="0.5" value="2" />
+                <span class="range-label" id="penStrokeWidthLabel">2</span>
+                <select id="penCap">
+                    <option value="butt">Butt</option>
+                    <option value="round" selected>Round</option>
+                    <option value="square">Square</option>
+                </select>
+                <select id="penJoin">
+                    <option value="miter">Miter</option>
+                    <option value="round" selected>Round</option>
+                    <option value="bevel">Bevel</option>
+                </select>
+            </div>
+            <div class="tool-separator"></div>
+
+            <!-- Shape settings -->
+            <div class="tool-group" id="shapeSettings">
+                <span class="tool-group-label">Shape</span>
+                <input type="color" id="shapeFill" value="#00b4ff" />
+                <input type="color" id="shapeStroke" value="#ffffff" />
+                <input type="range" id="shapeStrokeWidth" min="0.5" max="12" step="0.5" value="2" />
+                <span class="range-label" id="shapeStrokeWidthLabel">2</span>
+                <button class="tool-btn active" id="shapeFillToggle" style="font-size:0.4rem;padding:1px 4px;">Fill</button>
+                <button class="tool-btn active" id="shapeStrokeToggle" style="font-size:0.4rem;padding:1px 4px;">Stroke</button>
+            </div>
+            <div class="tool-separator"></div>
+
+            <!-- Polygon/Star specific -->
+            <div class="tool-group" id="polygonSettings" style="display:none;">
+                <span class="tool-group-label">Sides</span>
+                <input type="number" id="polySides" value="6" min="3" max="24" class="tool-input-number" />
+                <span style="font-size:0.4rem;color:var(--text-muted);">Star</span>
+                <input type="number" id="polyStarRatio" value="50" min="10" max="90" class="tool-input-number" />
+                <span style="font-size:0.4rem;color:var(--text-muted);">%</span>
+            </div>
+            <div class="tool-separator"></div>
+
+            <!-- Actions -->
+            <div class="tool-group">
+                <button class="tool-btn" id="undoBtn" title="Undo (Ctrl+Z)"><i class="fas fa-undo-alt"></i></button>
+                <button class="tool-btn" id="redoBtn" title="Redo (Ctrl+Y)"><i class="fas fa-redo-alt"></i></button>
+                <button class="tool-btn" id="deleteBtn" title="Delete (Del)"><i class="fas fa-trash-alt"></i></button>
+                <button class="tool-btn" id="groupBtn" title="Group (Ctrl+G)"><i class="fas fa-object-group"></i></button>
+                <button class="tool-btn" id="ungroupBtn" title="Ungroup (Ctrl+Shift+G)"><i class="fas fa-object-ungroup"></i></button>
+                <button class="tool-btn" id="zoomInBtn" title="Zoom In"><i class="fas fa-plus-circle"></i></button>
+                <button class="tool-btn" id="zoomOutBtn" title="Zoom Out"><i class="fas fa-minus-circle"></i></button>
+                <button class="tool-btn" id="zoomFitBtn" title="Fit"><i class="fas fa-expand"></i></button>
+                <span class="zoom-display" id="zoomDisplay">100%</span>
+            </div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main-area">
+
+            <!-- LEFT PANEL -->
+            <div class="left-panel" id="leftPanel">
+                <div class="panel-scroll">
+
+                    <!-- Colors -->
+                    <div class="section">
+                        <div class="section-label"><i class="fas fa-palette"></i> Colors</div>
+                        <div class="color-row">
+                            <label>Fill</label>
+                            <input type="color" id="fillColor" value="#00b4ff" />
+                            <span class="color-hex" id="fillHex">#00b4ff</span>
+                            <button class="color-none" id="fillNone">✕</button>
+                        </div>
+                        <div class="color-row" style="margin-top:1px;">
+                            <label>Stroke</label>
+                            <input type="color" id="strokeColor" value="#ffffff" />
+                            <span class="color-hex" id="strokeHex">#ffffff</span>
+                            <button class="color-none" id="strokeNone">✕</button>
+                        </div>
+                        <div class="stroke-row">
+                            <label>W</label>
+                            <input type="range" id="strokeWidthRange" min="0.5" max="12" step="0.5" value="2" />
+                            <span class="range-label" id="strokeWidthLabel">2</span>
+                            <select id="strokeCap">
+                                <option value="butt">Butt</option>
+                                <option value="round" selected>Round</option>
+                                <option value="square">Square</option>
+                            </select>
+                            <select id="strokeJoin">
+                                <option value="miter">Miter</option>
+                                <option value="round" selected>Round</option>
+                                <option value="bevel">Bevel</option>
+                            </select>
+                        </div>
+                        <div class="color-presets" id="colorPresets">
+                            <button class="color-preset active" style="background:#00b4ff;" data-color="#00b4ff"></button>
+                            <button class="color-preset" style="background:#ff6b6b;" data-color="#ff6b6b"></button>
+                            <button class="color-preset" style="background:#ffd700;" data-color="#ffd700"></button>
+                            <button class="color-preset" style="background:#4ecdc4;" data-color="#4ecdc4"></button>
+                            <button class="color-preset" style="background:#ff9ff3;" data-color="#ff9ff3"></button>
+                            <button class="color-preset" style="background:#54a0ff;" data-color="#54a0ff"></button>
+                            <button class="color-preset" style="background:#7bed9f;" data-color="#7bed9f"></button>
+                            <button class="color-preset" style="background:#ff6348;" data-color="#ff6348"></button>
+                            <button class="color-preset" style="background:#f368e0;" data-color="#f368e0"></button>
+                            <button class="color-preset" style="background:#ffffff;" data-color="#ffffff"></button>
+                            <button class="color-preset" style="background:#000000;" data-color="#000000"></button>
+                            <button class="color-preset" style="background:#1a1a2e;" data-color="#1a1a2e"></button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Size -->
+                    <div class="section">
+                        <div class="section-label"><i class="fas fa-arrows-alt"></i> Canvas</div>
+                        <div class="size-grid" id="sizeGrid">
+                            <button class="size-btn active" data-w="1080" data-h="1080"><span class="size-label">Square</span><span class="size-dims">1080×1080</span></button>
+                            <button class="size-btn" data-w="1600" data-h="1600"><span class="size-label">HD</span><span class="size-dims">1600×1600</span></button>
+                            <button class="size-btn" data-w="1920" data-h="1080"><span class="size-label">Wide</span><span class="size-dims">1920×1080</span></button>
+                            <button class="size-btn" data-w="1200" data-h="800"><span class="size-label">4:3</span><span class="size-dims">1200×800</span></button>
+                            <button class="size-btn" data-w="800" data-h="800"><span class="size-label">Small</span><span class="size-dims">800×800</span></button>
+                            <button class="size-btn" data-w="2400" data-h="2400"><span class="size-label">4K</span><span class="size-dims">2400×2400</span></button>
+                        </div>
+                        <div class="custom-size-row">
+                            <input type="number" id="customW" placeholder="W" min="100" max="4000" value="1080" />
+                            <span>×</span>
+                            <input type="number" id="customH" placeholder="H" min="100" max="4000" value="1080" />
+                            <button id="applyCustomSize">Apply</button>
+                        </div>
+                    </div>
+
+                    <!-- Background -->
+                    <div class="section">
+                        <div class="section-label"><i class="fas fa-fill-drip"></i> Background</div>
+                        <div class="bg-row">
+                            <input type="color" id="bgColorPicker" value="#12161e" />
+                            <span class="bg-hex" id="bgHexDisplay">#12161e</span>
+                            <button id="bgTransparent">Transparent</button>
+                            <button id="bgWhite">White</button>
+                        </div>
+                    </div>
+
+                    <!-- Align -->
+                    <div class="section">
+                        <div class="section-label"><i class="fas fa-arrows-alt-h"></i> Align</div>
+                        <div class="align-row">
+                            <button class="align-btn" data-align="left"><i class="fas fa-align-left"></i></button>
+                            <button class="align-btn" data-align="center-h"><i class="fas fa-align-center"></i></button>
+                            <button class="align-btn" data-align="right"><i class="fas fa-align-right"></i></button>
+                            <button class="align-btn" data-align="top"><i class="fas fa-align-top"></i></button>
+                            <button class="align-btn" data-align="center-v"><i class="fas fa-align-middle"></i></button>
+                            <button class="align-btn" data-align="bottom"><i class="fas fa-align-bottom"></i></button>
+                            <button class="align-btn" data-align="distribute-h"><i class="fas fa-arrows-alt-h"></i></button>
+                            <button class="align-btn" data-align="distribute-v"><i class="fas fa-arrows-alt-v"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Objects -->
+                    <div class="section">
+                        <div class="section-label"><i class="fas fa-shapes"></i> Objects</div>
+                        <div class="objects-list" id="objectsList">
+                            <div style="font-size:0.45rem;color:var(--text-muted);opacity:0.3;text-align:center;padding:4px 0;">No objects</div>
+                        </div>
+                    </div>
+
+                    <!-- Export -->
+                    <div class="section" style="border-top:1px solid rgba(255,255,255,0.03);padding-top:6px;margin-top:2px;">
+                        <div class="export-row">
+                            <button class="export-btn-primary" id="exportSVG"><i class="fas fa-code"></i> SVG</button>
+                            <button class="export-btn-primary" id="exportPNG"><i class="fas fa-image"></i> PNG</button>
+                            <button class="export-btn-secondary" id="clearAll"><i class="fas fa-trash-alt"></i> Clear</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CANVAS -->
+            <div class="canvas-panel" id="canvasPanel">
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <div class="canvas-container" id="canvasContainer">
+                        <canvas id="mainCanvas"></canvas>
+                        <canvas id="guideCanvas"></canvas>
+                        <canvas id="overlayCanvas"></canvas>
+                        <canvas id="compositeCanvas"></canvas>
+                        <div class="empty-msg" id="emptyMsg">
+                            <i class="fas fa-vector-square"></i>
+                            <p>VectorForge Pro · Illustrator-style Studio</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="right-panel" id="rightPanel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-tab="layers">Layers</button>
+                    <button class="panel-tab" data-tab="props">Properties</button>
+                </div>
+
+                <!-- Layers -->
+                <div class="panel-content" id="layersPanel">
+                    <div class="layer-actions">
+                        <button id="addLayerBtn"><i class="fas fa-plus"></i> Add</button>
+                        <button id="duplicateLayerBtn"><i class="fas fa-copy"></i> Dup</button>
+                        <button id="mergeLayerBtn"><i class="fas fa-layer-group"></i> Merge</button>
+                        <button id="moveLayerUpBtn"><i class="fas fa-chevron-up"></i></button>
+                        <button id="moveLayerDownBtn"><i class="fas fa-chevron-down"></i></button>
+                    </div>
+                    <div class="layer-list" id="layerList"></div>
+                </div>
+
+                <!-- Properties -->
+                <div class="panel-content hidden" id="propsPanel">
+                    <div class="prop-group">
+                        <span class="prop-label">Object</span>
+                        <div class="prop-row"><input type="text" id="objNameInput" placeholder="Name" /></div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Fill</span>
+                            <input type="color" id="objFillColor" class="prop-color" value="#00b4ff" />
+                            <button id="objFillNone" style="padding:1px 4px;border-radius:3px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text-muted);font-size:0.35rem;cursor:pointer;height:16px;">✕</button>
+                        </div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Stroke</span>
+                            <input type="color" id="objStrokeColor" class="prop-color" value="#ffffff" />
+                            <button id="objStrokeNone" style="padding:1px 4px;border-radius:3px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text-muted);font-size:0.35rem;cursor:pointer;height:16px;">✕</button>
+                        </div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">W</span>
+                            <input type="range" id="objStrokeWidth" min="0.5" max="12" step="0.5" value="2" />
+                            <span class="prop-value" id="objStrokeWidthLabel">2</span>
+                        </div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Opacity</span>
+                            <input type="range" id="objOpacity" min="10" max="100" value="100" />
+                            <span class="prop-value" id="objOpacityLabel">100</span>
+                        </div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">X</span>
+                            <input type="text" id="objX" style="width:32px;font-size:0.4rem;padding:1px 2px;" />
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Y</span>
+                            <input type="text" id="objY" style="width:32px;font-size:0.4rem;padding:1px 2px;" />
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Rot</span>
+                            <input type="text" id="objRot" style="width:28px;font-size:0.4rem;padding:1px 2px;" value="0" />
+                        </div>
+                    </div>
+                    <div class="prop-group" style="border-top:1px solid rgba(255,255,255,0.03);padding-top:4px;">
+                        <span class="prop-label">Layer</span>
+                        <div class="prop-row"><input type="text" id="layerNameInput" placeholder="Layer name" /></div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Opacity</span>
+                            <input type="range" id="layerOpacity" min="0" max="100" value="100" />
+                            <span class="prop-value" id="layerOpacityVal">100</span>
+                        </div>
+                        <div class="prop-row" style="margin-top:1px;">
+                            <span style="font-size:0.4rem;color:var(--text-muted);">Blend</span>
+                            <select id="layerBlend">
+                                <option value="source-over">Normal</option>
+                                <option value="multiply">Multiply</option>
+                                <option value="screen">Screen</option>
+                                <option value="overlay">Overlay</option>
+                                <option value="darken">Darken</option>
+                                <option value="lighten">Lighten</option>
+                                <option value="difference">Difference</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="prop-group" style="border-top:1px solid rgba(255,255,255,0.03);padding-top:4px;">
+                        <span class="prop-label">Canvas</span>
+                        <div style="font-size:0.45rem;color:var(--text-muted);">
+                            <span id="canvasSizeInfo">—</span>
+                            <span style="display:block;font-size:0.35rem;color:var(--text-muted);opacity:0.4;" id="objectCountInfo">Objects: 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================== -->
+    <script src="/static/js/vectot.js"></script>
+
+</body>
+</html>

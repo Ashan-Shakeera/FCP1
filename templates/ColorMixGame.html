@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+  <title>Helaberry · Design Hub</title>
+
+  <!-- ===== FAVICON / LOGO ===== -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+  <meta name="theme-color" content="#070b13" />
+  <meta property="og:image" content="{{ url_for('static', filename='img/logo.png') }}" />
+  <meta name="twitter:image" content="{{ url_for('static', filename='img/logo.png') }}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/colormixgame.css') }}" />
+</head>
+
+<body>
+
+<!-- ===== BACKGROUND ===== -->
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+<div class="bg-grid"></div>
+<div class="scanlines"></div>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <a class="nav-brand" href="{{ url_for('homepage') }}">
+    <span class="brand-icon" id="brandIcon">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Helaberry Logo"
+           onerror="document.getElementById('brandIcon').classList.add('fallback')" />
+      <span class="fallback-letter">H</span>
+    </span>
+    <span>
+      <span class="brand-name">HELABERRY</span>
+      <span class="brand-sub" style="display:block;">design hub</span>
+    </span>
+  </a>
+  <div class="nav-actions">
+    <a class="nav-btn nav-btn-outline" href="{{ url_for('homepage') }}">
+      <i class="fas fa-house"></i> Home
+    </a>
+    <span class="nav-divider" style="color:var(--text-muted);font-size:0.7rem;opacity:0.3;">|</span>
+    <a class="nav-btn nav-btn-primary" href="{{ url_for('tool_design_studio') }}">
+      <i class="fas fa-wand-magic-sparkles"></i> Open Studio
+    </a>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="container">
+
+  <!-- HERO -->
+  <section class="hero glass">
+    <div class="glow-ring"></div>
+    <div class="glow-ring-2"></div>
+
+    <span class="badge"><i class="fas fa-gamepad"></i> Creative Suite · v2.0</span>
+
+    <h1 class="hero-title">
+      Your <span class="text-shimmer">color arsenal</span><br />
+      ready for deployment
+    </h1>
+
+    <p class="hero-desc">
+      Two elite color tools — ColorBoom and ColorMix. Choose your weapon and dominate the canvas.
+    </p>
+
+    <div class="hero-stats">
+      <span class="pill"><i class="fas fa-palette"></i> 2 Tools</span>
+      <span class="pill"><i class="fas fa-bolt"></i> Instant Access</span>
+      <span class="pill"><i class="fas fa-cloud"></i> Local &amp; Offline</span>
+      <span class="pill"><i class="fas fa-heart" style="color:var(--neon-pink);"></i> Free Forever</span>
+    </div>
+  </section>
+
+  <!-- ===== BIG BUTTON: ColorBoom ===== -->
+  <div class="home-btn-wrap">
+    <a class="home-btn colorboom" href="{{ url_for('tool_color_boom') }}" id="colorBoomBtn">
+      <span class="home-btn-icon"><i class="fas fa-fire"></i></span>
+      <span class="home-btn-text">
+        <h2>COLORBOOM</h2>
+        <p>Explosive color palettes &amp; vibrant gradient generator</p>
+      </span>
+      <span class="home-btn-arrow"><i class="fas fa-arrow-right"></i></span>
+    </a>
+  </div>
+
+  <!-- ===== BIG BUTTON: ColorMix ===== -->
+  <div class="home-btn-wrap">
+    <a class="home-btn colormix" href="{{ url_for('tool_color_mix') }}" id="colorMixBtn">
+      <span class="home-btn-icon"><i class="fas fa-flask"></i></span>
+      <span class="home-btn-text">
+        <h2>COLORMIX</h2>
+        <p>Blend, match and experiment with color combinations</p>
+      </span>
+      <span class="home-btn-arrow"><i class="fas fa-arrow-right"></i></span>
+    </a>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    Built with <span class="heart">♥</span> for creators
+    <span class="dot"></span>
+    Helaberry Design Hub
+    <span class="dot"></span>
+    © 2025
+  </footer>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/colormixgame.js') }}"></script>
+
+</body>
+</html>

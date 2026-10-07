@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>Helaberry · Modern Welcome</title>
+
+    <!-- ===== FAVICON / LOGO ===== -->
+    <link rel="icon" type="image/png" href="/static/images/logo.png" />
+    <link rel="apple-touch-icon" href="/static/images/logo.png" />
+    <meta name="theme-color" content="#070b13" />
+    <meta property="og:image" content="/static/images/logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
+    <!-- ===== EXTERNAL CSS ===== -->
+    <link rel="stylesheet" href="/static/styles/index.css" />
+</head>
+<body>
+
+    <!-- ===== FIXED NAVIGATION BAR ===== -->
+    <nav class="navbar" id="navbar">
+        <!-- Brand -->
+        <a class="nav-brand" href="/">
+            <span class="brand-icon">
+                <img src="/static/images/logo.png" alt="Helaberry Logo" width="40" height="40" />
+            </span>
+            <span class="brand-name">Helaberry</span>
+        </a>
+
+        <!-- Desktop Actions -->
+        <div class="nav-actions">
+            <!-- Changed to <a> tags pointing to Flask routes -->
+            <a href="/signinup?mode=signin" class="nav-btn nav-btn-outline">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </a>
+            <span class="nav-divider">|</span>
+            <a href="/signinup?mode=signup" class="nav-btn nav-btn-primary">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </a>
+
+            <!-- Hamburger (mobile) -->
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="nav-mobile-menu" id="mobileMenu">
+            <a href="/signinup?mode=signin" class="nav-btn nav-btn-outline" style="width:100%;justify-content:center;">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </a>
+            <a href="/signinup?mode=signup" class="nav-btn nav-btn-primary" style="width:100%;justify-content:center;">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </a>
+        </div>
+    </nav>
+
+    <!-- ===== ANIMATED BACKGROUND ===== -->
+    <div class="bg-canvas">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+    <div class="bg-grid"></div>
+
+    <!-- ===== MAIN WRAPPER ===== -->
+    <div class="welcome-wrapper">
+
+        <!-- ===== LEFT: CHAT PANEL (with 1:1 video) ===== -->
+        <div class="chat-panel">
+
+            <!-- Chat header -->
+            <div class="chat-header">
+                <!-- LOGO AVATAR -->
+                <div class="chat-avatar">
+                    <img src="/static/images/logo.png" alt="Helaberry AI" />
+                </div>
+                <div class="chat-header-info">
+                    <h4>AI Assistant</h4>
+                    <p><span class="status-dot"></span> Online · ready to help</p>
+                </div>
+                <span class="badge-ai"><i class="fas fa-bolt" style="margin-right:4px;"></i> v2.0</span>
+            </div>
+
+            <!-- Video container — 1:1 aspect ratio -->
+            <div class="video-container" id="videoContainer">
+                <video id="agentVideo" autoplay loop muted playsinline>
+                    <source src="/static/videos/1.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay"></div>
+
+                <!-- Chat messages overlay -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="bubble ai">
+                        👋 Hey there! I'm your AI guide.
+                        <span class="bubble-time">Just now</span>
+                    </div>
+                    <div class="bubble ai">
+                        🎨 Ready to explore Helaberry?
+                        <span class="bubble-time">Just now</span>
+                    </div>
+                    <div class="typing-indicator" id="typingIndicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <!-- Input bar -->
+                <div class="chat-input-bar">
+                    <input type="text" placeholder="Type a message…" id="chatInput" />
+                    <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== RIGHT: WELCOME CONTENT ===== -->
+        <div class="welcome-content glass">
+            <div class="glow-ring"></div>
+
+            <!-- Brand -->
+            <div class="brand">
+                <div class="brand-icon">
+                    <img src="/static/images/logo.png" alt="Helaberry Logo" width="56" height="56" />
+                </div>
+                <div>
+                    <div class="brand-name">Helaberry</div>
+                    <div class="brand-sub">creative platform</div>
+                </div>
+            </div>
+
+            <!-- Hero -->
+            <h1 class="hero-title">
+                Where <span class="highlight">ideas</span> come alive
+            </h1>
+            <p class="hero-desc">
+                Join a community of creators, dreamers, and innovators.
+                Share your work, discover inspiration, and bring your vision to life.
+            </p>
+
+            <!-- Buttons -->
+            <div class="btn-group">
+               
+                <span class="divider-text" style="padding:0 2px;">&bull;</span>
+                
+                <!-- Changed to <a> tag pointing to the Sign Up route -->
+                <a href="/signinup?mode=signup" class="btn btn-start">
+                    Get Started <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Social proof -->
+            <div class="mini-features">
+                <span><i class="fas fa-users"></i> 12K+ creators</span>
+                <span><i class="fas fa-image"></i> 45K+ artworks</span>
+                <span><i class="fas fa-wand-magic-sparkles"></i> AI–powered</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EXTERNAL JS ===== -->
+    <script src="/static/js/index.js"></script>
+
+</body>
+</html>
